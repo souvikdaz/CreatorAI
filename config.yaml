@@ -1,0 +1,25 @@
+# Channel & API configuration
+my_channel_id: "UCu2EoFcaIV7rqAXvG9rcUiQ"
+
+niche_keywords:
+  - "motovlog"
+  - "motorcycle touring"
+  - "automotive"
+  - "technology"
+  - "gadgets"
+  - "bike trips"
+
+competitor_channel_ids:
+  - "https://www.youtube.com/@SwatiRojha"
+  - "https://www.youtube.com/@deepranjansachan"
+  - "https://www.youtube.com/@DeepteshLovesTECH"
+  - "https://www.youtube.com/@dReamwAlk"
+  - "https://www.youtube.com/@throttleyourlife"
+
+timezone: "Asia/Kolkata"  # Indian Standard Time (IST)
+audience_country: "Global"
+
+# Quota & Cache settings
+quota_daily_limit: 10000
+cache_ttl_hours: 24
+sqlite_db_path: "data/youtube_agent.db"

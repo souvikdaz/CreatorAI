@@ -1,0 +1,19 @@
+# Secrets & Credentials
+.env
+client_secrets.json
+token.json
+credentials.json
+
+# Database & Runtime Output
+data/*.db
+data/*.sqlite
+output/
+reports_output/
+
+# Python cache & virtualenv
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
