@@ -57,24 +57,24 @@ class FollowerGrowthModule(BaseModule):
         top_3_performing_formats = [
             {
                 "rank": 1,
-                "sub_format": "High-Action Obstacle Reels (Water Crossings / Technical Trails)",
+                "sub_format": "High-Action Obstacle & Route Reels (Khardung La / Umling La)",
                 "parent_format": "REEL",
-                "delta_metric": "+110 follows gained on Post ig_post_03 (5.7 follows / 1k reach)",
-                "reasoning": "High visual tension and danger prompt immediate explore feed shares and follows from adventure touring riders wanting more offroad footage on the Himalayan 450."
+                "delta_metric": "+11 follows gained on Post ig_post_03 (7.1 follows / 1k reach)",
+                "reasoning": "High visual tension, unusual encounters (auto-rickshaw at 18,000 ft), and real pass riding prompt immediate explore shares and follows from touring riders on the Himalayan 450."
             },
             {
                 "rank": 2,
-                "sub_format": "Problem-Solving / Extreme Climate Survival Reels",
+                "sub_format": "Problem-Solving Route Survival Reels (High Altitude Freezing Weather)",
                 "parent_format": "REEL",
-                "delta_metric": "+64 follows gained on Post ig_post_01 (4.5 follows / 1k reach)",
-                "reasoning": "Actionable cold-weather battery survival hacks create instant perceived authority. 420 saves and 310 shares drove non-follower reach beyond initial follower graph."
+                "delta_metric": "+6 follows gained on Post ig_post_01 (6.7 follows / 1k reach)",
+                "reasoning": "Actionable route difficulty and extreme cold-weather survival hacks on the Himalayan 450 establish instant authority and drive shares to non-followers."
             },
             {
                 "rank": 3,
-                "sub_format": "Save-Driven Packing & Emergency Tool Carousels",
+                "sub_format": "Save-Driven Route Guides & Fuel Calculation Carousels",
                 "parent_format": "CAROUSEL",
-                "delta_metric": "+42 follows gained with 680 saves on Post ig_post_02 (6.9% save rate)",
-                "reasoning": "Carousels designed in Canva Free act as evergreen reference cheat-sheets. High save count triggers Instagram algorithm to surface account to lookalike road-trippers."
+                "delta_metric": "+4 follows gained with 38 saves on Post ig_post_02 (5.9% save rate)",
+                "reasoning": "Carousels designed in Canva Free serve as reference cheat-sheets for remote border roads (Rezang La / Hanle), driving bookmarks and long-term profile visits."
             }
         ]
 
@@ -131,12 +131,12 @@ class FollowerGrowthModule(BaseModule):
             }
         ]
 
-        # 5. Realistic Growth Projections (Strictly labeled as estimates, no guarantees)
+        curr_ig_followers = getattr(self.config, "my_instagram_followers", 282)
         growth_projections = {
             "disclaimer": "Estimates based strictly on historical follower conversion rates (3.0 - 5.7 follows per 1,000 reach across past 5 uploads). No guaranteed follower numbers.",
-            "current_followers": 1850,
-            "projected_monthly_reach_range": "45,000 - 85,000 accounts",
-            "projected_30d_follower_delta_range": "+210 to +480 net new followers (estimated range)",
+            "current_followers": curr_ig_followers,
+            "projected_monthly_reach_range": "4,200 - 9,500 accounts",
+            "projected_30d_follower_delta_range": "+25 to +55 net new followers (estimated range)",
             "required_monthly_posts": 16
         }
 
