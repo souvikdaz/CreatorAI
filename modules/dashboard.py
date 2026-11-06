@@ -23,12 +23,13 @@ class DashboardModule(BaseModule):
             retention_curves = self.db.get_retention_curves(limit=5)
 
         my_videos = self.db.get_my_videos(limit=5)
-        my_channel = self.db.get_my_channel() or {"subscriber_count": 420, "view_count": 82400}
+        fallback_subs = getattr(self.config, "my_channel_subscribers", 887)
+        my_channel = self.db.get_my_channel() or {"subscriber_count": fallback_subs, "view_count": 82400}
 
         # 1. KPI Cards Computation
-        # Followers: Combined YouTube Subs + Instagram Followers (e.g. 420 + 1,850 = 2,270)
+        # Followers: Combined YouTube Subs + Instagram Followers (e.g. 887 + 1,850 = 2,737)
         ig_followers = 1850
-        yt_subs = my_channel.get("subscriber_count", 420)
+        yt_subs = my_channel.get("subscriber_count", fallback_subs)
         total_audience = ig_followers + yt_subs
 
         # 30d Follower Delta

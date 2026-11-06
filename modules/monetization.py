@@ -14,7 +14,7 @@ class MonetizationAccelerationModule(BaseModule):
         my_channel = self.db.get_my_channel()
         my_videos = self.db.get_my_videos(limit=50)
 
-        current_subs = my_channel.get("subscriber_count", 0) if my_channel else 420
+        current_subs = my_channel.get("subscriber_count", 0) if my_channel else getattr(self.config, "my_channel_subscribers", 887)
         total_channel_views = my_channel.get("view_count", 0) if my_channel else 82400
 
         # Calculate estimated total watch hours from videos in cache

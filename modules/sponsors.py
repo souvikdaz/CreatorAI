@@ -9,7 +9,7 @@ class SponsorshipModule(BaseModule):
         my_channel = self.db.get_my_channel()
         my_vids = self.db.get_my_videos(limit=20)
 
-        sub_count = my_channel.get("subscriber_count", 0) if my_channel else 420
+        sub_count = my_channel.get("subscriber_count", 0) if my_channel else getattr(self.config, "my_channel_subscribers", 887)
         avg_views = int(sum(v["views"] for v in my_vids) / len(my_vids)) if my_vids else 5500
 
         confidence = "HIGH"

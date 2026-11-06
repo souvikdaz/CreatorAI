@@ -23,14 +23,39 @@ class YouTubeClient:
         else:
             self._sync_live_data(force=force_refresh)
 
+    def _fetch_public_subscriber_count(self, handle: str) -> int:
+        """Attempts to parse public subscriber count from YouTube channel page if API key is absent."""
+        try:
+            import re
+            clean_handle = handle if handle.startswith("@") else f"@{handle}"
+            url = f"https://www.youtube.com/{clean_handle}"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"})
+            with urllib.request.urlopen(req, timeout=5) as res:
+                html = res.read().decode("utf-8", errors="ignore")
+                matches = re.findall(r"(\d+[\.\d]*[KkMm]?)\s+subscribers", html)
+                if matches:
+                    raw_val = matches[0].strip()
+                    if "K" in raw_val.upper():
+                        return int(float(raw_val.upper().replace("K", "")) * 1000)
+                    elif "M" in raw_val.upper():
+                        return int(float(raw_val.upper().replace("M", "")) * 1000000)
+                    else:
+                        return int(raw_val.replace(",", ""))
+        except Exception:
+            pass
+        return None
+
     def _seed_mock_data(self, force: bool = False):
+        subs = self._fetch_public_subscriber_count(self.config.my_channel_handle) or getattr(self.config, "my_channel_subscribers", 887)
         existing_my = self.db.get_my_channel()
         if existing_my and not force:
-            if existing_my.get("channel_id") == self.config.my_channel_id and existing_my.get("custom_url") == self.config.my_channel_handle:
+            if (existing_my.get("channel_id") == self.config.my_channel_id and
+                existing_my.get("custom_url") == self.config.my_channel_handle and
+                existing_my.get("subscriber_count") == subs):
                 return
 
         print("[YouTubeClient] Initializing sample/mock dataset for channel, Instagram & competitors...")
-        seed = get_mock_database_seed(self.config.my_channel_id, self.config.my_channel_handle, self.config.my_channel_title)
+        seed = get_mock_database_seed(self.config.my_channel_id, self.config.my_channel_handle, self.config.my_channel_title, subs)
         for ch in seed.get("channels", []):
             self.db.upsert_channel(ch)
         for vid in seed.get("videos", []):

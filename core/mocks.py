@@ -18,7 +18,7 @@ def get_sample_transcript() -> list:
         {"start_sec": 600, "end_sec": 660, "text": "Summary of today's 280-kilometer stint: 14 hours saddle time on the Himalayan 450, zero mechanical breakdowns, and memories that will last a lifetime. Drop your questions below on permits and gear list, and make sure you're subscribed for Part 2 tackling Shinku La pass."}
     ]
 
-def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ", my_channel_handle: str = "@SouvikSays", my_channel_title: str = "Souvik Says") -> dict:
+def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ", my_channel_handle: str = "@SouvikSays", my_channel_title: str = "Souvik Says", my_channel_subscribers: int = 887) -> dict:
     now = datetime.now(timezone.utc)
 
     channels = [
@@ -26,7 +26,7 @@ def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ", my_c
             "channel_id": my_channel_id,
             "title": my_channel_title,
             "custom_url": my_channel_handle,
-            "subscriber_count": 420,
+            "subscriber_count": my_channel_subscribers,
             "view_count": 82400,
             "video_count": 18,
             "is_my_channel": True

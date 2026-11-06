@@ -112,6 +112,7 @@ class Config:
         self.my_channel_id = extract_channel_identifier(self.my_channel_id_raw)
         self.my_channel_handle = str(raw_cfg.get("my_channel_handle", "@SouvikSays")).strip()
         self.my_channel_title = str(raw_cfg.get("my_channel_title", "Souvik Says")).strip()
+        self.my_channel_subscribers = int(raw_cfg.get("my_channel_subscribers", 887))
 
         raw_niche = raw_cfg.get("niche_keywords", [])
         if isinstance(raw_niche, str):
