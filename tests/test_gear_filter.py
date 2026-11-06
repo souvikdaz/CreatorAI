@@ -91,7 +91,12 @@ class TestGearFilter(unittest.TestCase):
     def test_phone_spec_confirmation_removes_notice(self):
         """Verifies that defining phone settings removes the unconfirmed warning notice."""
         gm = GearManager()
-        # Default unconfirmed
+        # Test unconfirmed behavior when settings are cleared
+        gm.gear["phone_settings"] = {}
+        if "capture profile" in gm.gear:
+            del gm.gear["capture profile"]
+        if "capture_profile" in gm.gear:
+            del gm.gear["capture_profile"]
         self.assertFalse(gm.is_phone_spec_confirmed())
         self.assertIn("Note on Phone Settings", gm.get_phone_spec_notice())
 

@@ -4,17 +4,18 @@
 
 bike: Himalayan 450
 action_camera: DJI Osmo Action 3
-phone: Motorola Edge 40 Neo                                                                                                                                                                                                                                           
-    phone_settings:                                                                                                                                                                                                                                                       
-      resolution: "1080p"                                                                                                                                                                                                                                                 
-      frame_rate: "60fps"                                                                                                                                                                                                                                                 
-      stabilisation: "EIS Enabled"                                                                                                                                                                                                                                        
-      aspect_ratio: "16:9 Horizontal (Long Form Videos)"
+phone: Motorola Edge 40 Neo
+phone_settings:
+  resolution: "1080p"
+  frame_rate: "60fps"
+  stabilisation: "EIS Enabled"
+  stabilization: "EIS Enabled"
+  aspect_ratio: "16:9 Horizontal (Long Form Videos)"
+
 microphones:
   - Generic wired microphone
   - Grenaro wireless microphone
 computer: Apple Mac Mini M4
 video_editing_fx: Final Cut Pro
 image_editing: Canva (Free tier)
-capture profile: 1080p 25fps rocksteady
 other: []

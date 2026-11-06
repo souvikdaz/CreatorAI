@@ -7,12 +7,21 @@ class ShootPlannerModule(BaseModule):
     name = "shoot"
 
     def run(self, **kwargs) -> dict:
-        gm = self.config.gear_manager if hasattr(self.config, "gear_manager") else GearManager()
-        data_source = f"Hardware & Software Manifest: {self.config.gear_config_path if hasattr(self.config, 'gear_config_path') else 'config/gear.yaml'}"
+        gm = getattr(self.config, "gear_manager", None)
+        if not gm or not hasattr(gm, "is_phone_spec_confirmed"):
+            from core.gear_manager import GearManager
+            gear_path = getattr(self.config, "gear_config_path", None)
+            gm = GearManager(gear_path)
+            if hasattr(self.config, "gear_manager"):
+                self.config.gear_manager = gm
+
+        data_source = f"Hardware & Software Manifest: {getattr(self.config, 'gear_config_path', 'config/gear.yaml')}"
         confidence = "HIGH"
 
         # Mandatory Phone Specs Notice
-        phone_notice = gm.get_phone_spec_notice()
+        phone_notice = gm.get_phone_spec_notice() if hasattr(gm, "get_phone_spec_notice") else ""
+        phone_confirmed = gm.is_phone_spec_confirmed() if hasattr(gm, "is_phone_spec_confirmed") else False
+        phone_settings = getattr(gm, "phone_settings", {})
 
         # 4 Fully-Detailed Main Planned Shoots using ONLY gear.yaml items
         planned_shoots = [
@@ -143,8 +152,8 @@ class ShootPlannerModule(BaseModule):
             "confidence": confidence,
             "gear_manifest": gm.get_gear_manifest(),
             "phone_notice": phone_notice,
-            "phone_spec_confirmed": gm.is_phone_spec_confirmed(),
-            "phone_settings": gm.phone_settings,
+            "phone_spec_confirmed": phone_confirmed,
+            "phone_settings": phone_settings,
             "planned_shoots_count": len(planned_shoots),
             "planned_shoots": planned_shoots,
             "needs_gear_optional": needs_gear_optional

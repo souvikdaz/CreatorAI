@@ -102,7 +102,7 @@ st.markdown("""
 
 # 1. Initialize Core Resources
 @st.cache_resource(show_spinner=False)
-def get_services(cache_version: str = "v2.0.0"):
+def get_services(cache_version: str = "v3.0.0"):
     config = Config()
     db = Database(config.sqlite_db_path)
     quota = QuotaManager(config.sqlite_db_path, daily_limit=config.quota_daily_limit)
@@ -141,6 +141,11 @@ if not hasattr(yt_client, "get_live_subscriber_count"):
 
 if not hasattr(ig_client, "get_live_follower_count"):
     ig_client = InstagramClient(config, db, quota)
+
+if not hasattr(gear_mgr, "is_phone_spec_confirmed"):
+    from core.gear_manager import GearManager
+    gear_mgr = GearManager(config.gear_config_path)
+    config.gear_manager = gear_mgr
 
 if not hasattr(db, "get_audience_snapshots") or not hasattr(db, "record_audience_snapshot"):
     db = Database(config.sqlite_db_path)

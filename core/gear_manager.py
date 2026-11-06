@@ -88,14 +88,29 @@ class GearManager:
         p = self.gear.get("phone")
         if isinstance(p, dict):
             return {k: v for k, v in p.items() if k != "model"}
+        # Support top-level 'capture profile' or 'capture_profile'
+        cp = self.gear.get("capture profile") or self.gear.get("capture_profile")
+        if cp:
+            if isinstance(cp, dict):
+                return cp
+            cp_str = str(cp).strip()
+            return {
+                "capture_profile": cp_str,
+                "resolution": "1080p" if "1080" in cp_str else ("4K" if "4k" in cp_str.lower() else "1080p"),
+                "frame_rate": "25fps" if "25" in cp_str else ("30fps" if "30" in cp_str else ("60fps" if "60" in cp_str else "30fps")),
+                "stabilization": "RockSteady / EIS" if "rocksteady" in cp_str.lower() else "EIS Enabled"
+            }
         return {}
 
     def is_phone_spec_confirmed(self) -> bool:
         """Checks if phone capture settings (resolution, frame rate, stabilization) are confirmed."""
         ps = self.phone_settings
-        if not ps:
-            return False
-        return any(k in ps for k in ["resolution", "frame_rate", "fps", "framerate", "stabilization", "capture_profile", "profile"])
+        if bool(ps):
+            return True
+        for key in ["capture profile", "capture_profile", "phone_settings", "phone_specs"]:
+            if key in self.gear and bool(self.gear[key]):
+                return True
+        return False
 
     @property
     def microphones(self) -> list:
