@@ -26,6 +26,28 @@ class DashboardModule(BaseModule):
         fallback_subs = getattr(self.config, "my_channel_subscribers", 887)
         my_channel = self.db.get_my_channel() or {"subscriber_count": fallback_subs, "view_count": 82400}
 
+        # Check and sync audience snapshots from data/audience_snapshots.json (e.g. updated by GitHub Actions)
+        if getattr(self.db, "db_path", "") != ":memory:":
+            from pathlib import Path
+            snap_json = Path(self.config.sqlite_db_path).parent / "audience_snapshots.json"
+            if snap_json.exists():
+                try:
+                    with open(snap_json, "r") as f_snap:
+                        json_snaps = json.load(f_snap)
+                    if json_snaps and len(self.db.get_audience_snapshots()) < len(json_snaps):
+                        for s in json_snaps:
+                            self.db.record_audience_snapshot(
+                                date_str=s["date"],
+                                yt_subs=s["youtube_subscribers"],
+                                ig_followers=s["instagram_followers"],
+                                yt_views=s.get("youtube_views", 0),
+                                ig_posts=s.get("instagram_posts", 0),
+                                notes=s.get("notes", "Synced from audience_snapshots.json"),
+                                source=s.get("source", "json_sync")
+                            )
+                except Exception:
+                    pass
+
         # Check and initialize audience snapshots from persistent store / config
         snapshots = self.db.get_audience_snapshots()
         configured_history = self.config.raw.get("audience_history", [])

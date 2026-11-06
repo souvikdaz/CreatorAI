@@ -283,6 +283,16 @@ with tabs[0]:
     with st.expander("📸 Recorded Audience Snapshots & Weekly History Ledger", expanded=False):
         st.markdown("**Weekly Snapshot Ledger (Stored in SQLite `data/youtube_agent.db` & backup `data/audience_snapshots.json`)**")
         snaps_list = d_data.get("audience_snapshots", [])
+        if not snaps_list:
+            # Direct fallback to data/audience_snapshots.json (e.g. fresh Streamlit Cloud sync)
+            snap_json_path = Path(config.sqlite_db_path).parent / "audience_snapshots.json"
+            if snap_json_path.exists():
+                try:
+                    with open(snap_json_path, "r") as f_snap:
+                        snaps_list = json.load(f_snap)
+                except Exception:
+                    snaps_list = []
+
         if snaps_list:
             df_snaps = pd.DataFrame(snaps_list)[["date", "youtube_subscribers", "instagram_followers", "total_audience", "source"]]
             df_snaps.columns = ["Date", "YouTube Subs", "Instagram Followers", "Total Audience", "Source"]
