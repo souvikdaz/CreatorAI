@@ -153,12 +153,20 @@ class Config:
         db_rel = raw_cfg.get("sqlite_db_path", "data/youtube_agent.db")
         self.sqlite_db_path = str(self.base_dir / db_rel)
 
-        # Environment API keys
-        self.youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "").strip()
+        # Environment API keys & Streamlit Cloud secrets support
+        st_secrets = {}
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                st_secrets = st.secrets
+        except Exception:
+            pass
+
+        self.youtube_api_key = os.environ.get("YOUTUBE_API_KEY", str(st_secrets.get("YOUTUBE_API_KEY", ""))).strip()
         self.client_secrets_file = os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", "client_secrets.json")
         self.oauth_token_file = os.environ.get("YOUTUBE_OAUTH_TOKEN_FILE", "token.json")
-        self.instagram_access_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "").strip()
-        self.instagram_business_account_id = str(os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", self.my_instagram_business_account_id)).strip()
+        self.instagram_access_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", str(st_secrets.get("INSTAGRAM_ACCESS_TOKEN", ""))).strip()
+        self.instagram_business_account_id = str(os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", st_secrets.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", self.my_instagram_business_account_id))).strip()
         self.use_mock_data = os.environ.get("USE_MOCK_DATA", "").lower() in ("true", "1", "yes")
 
     def is_api_configured(self) -> bool:

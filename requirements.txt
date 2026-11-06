@@ -1,4 +1,9 @@
-# YouTube APIs
+# Web App & Visualization
+streamlit>=1.30.0
+plotly>=5.18.0
+pandas>=2.0.0
+
+# YouTube & Meta APIs
 google-api-python-client>=2.100.0
 google-auth-oauthlib>=1.1.0
 google-auth-httplib2>=0.2.0
