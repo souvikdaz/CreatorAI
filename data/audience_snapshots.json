@@ -1,7 +1,7 @@
 [
   {
-    "id": 4,
-    "recorded_at": "2026-11-06T18:26:12.982899+00:00",
+    "id": 1,
+    "recorded_at": "2026-11-06T19:18:47.731092+00:00",
     "date": "2026-08-14",
     "youtube_subscribers": 740,
     "instagram_followers": 230,
@@ -12,8 +12,8 @@
     "source": "seed"
   },
   {
-    "id": 5,
-    "recorded_at": "2026-11-06T18:26:12.983350+00:00",
+    "id": 2,
+    "recorded_at": "2026-11-06T19:18:47.731912+00:00",
     "date": "2026-09-04",
     "youtube_subscribers": 770,
     "instagram_followers": 239,
@@ -24,8 +24,8 @@
     "source": "seed"
   },
   {
-    "id": 6,
-    "recorded_at": "2026-11-06T18:26:12.983720+00:00",
+    "id": 3,
+    "recorded_at": "2026-11-06T19:18:47.732792+00:00",
     "date": "2026-09-25",
     "youtube_subscribers": 800,
     "instagram_followers": 248,
@@ -36,8 +36,8 @@
     "source": "seed"
   },
   {
-    "id": 7,
-    "recorded_at": "2026-11-06T18:26:12.984081+00:00",
+    "id": 4,
+    "recorded_at": "2026-11-06T19:18:47.733646+00:00",
     "date": "2026-10-09",
     "youtube_subscribers": 833,
     "instagram_followers": 259,
@@ -48,8 +48,8 @@
     "source": "seed"
   },
   {
-    "id": 8,
-    "recorded_at": "2026-11-06T18:26:12.984455+00:00",
+    "id": 5,
+    "recorded_at": "2026-11-06T19:18:47.734557+00:00",
     "date": "2026-10-16",
     "youtube_subscribers": 854,
     "instagram_followers": 261,
@@ -60,8 +60,8 @@
     "source": "seed"
   },
   {
-    "id": 9,
-    "recorded_at": "2026-11-06T18:26:12.984882+00:00",
+    "id": 6,
+    "recorded_at": "2026-11-06T19:18:47.735417+00:00",
     "date": "2026-10-23",
     "youtube_subscribers": 878,
     "instagram_followers": 272,
@@ -72,8 +72,8 @@
     "source": "seed"
   },
   {
-    "id": 1,
-    "recorded_at": "2026-11-06T18:26:15.458564+00:00",
+    "id": 7,
+    "recorded_at": "2026-11-06T19:18:49.234848+00:00",
     "date": "2026-11-06",
     "youtube_subscribers": 887,
     "instagram_followers": 282,
