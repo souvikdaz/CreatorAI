@@ -9,8 +9,7 @@ phone: Motorola Edge 40 Neo
       resolution: "1080p"                                                                                                                                                                                                                                                 
       frame_rate: "60fps"                                                                                                                                                                                                                                                 
       stabilisation: "EIS Enabled"                                                                                                                                                                                                                                        
-      aspect_ratio1: "16:9 Horizontal (Long Form Videos)" 
-      aspect_ratio2: "9:16 Vertical (Reels/Shorts)" 
+      aspect_ratio: "16:9 Horizontal (Long Form Videos)"
 microphones:
   - Generic wired microphone
   - Grenaro wireless microphone
