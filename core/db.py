@@ -139,6 +139,22 @@ class Database:
                     updated_at TEXT NOT NULL
                 )
             """)
+
+            # Audience snapshots table for weekly historical tracking
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS audience_snapshots (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    recorded_at TEXT NOT NULL,
+                    date TEXT NOT NULL UNIQUE,
+                    youtube_subscribers INTEGER NOT NULL,
+                    instagram_followers INTEGER NOT NULL,
+                    total_audience INTEGER NOT NULL,
+                    youtube_views INTEGER DEFAULT 0,
+                    instagram_posts INTEGER DEFAULT 0,
+                    notes TEXT,
+                    source TEXT DEFAULT 'auto'
+                )
+            """)
             conn.commit()
 
     def upsert_channel(self, channel: dict):
@@ -454,3 +470,89 @@ class Database:
             cur = conn.cursor()
             cur.execute("SELECT * FROM youtube_retention_curves ORDER BY updated_at DESC LIMIT ?", (limit,))
             return [dict(r) for r in cur.fetchall()]
+
+    # --- Weekly Audience Snapshot Methods ---
+    def record_audience_snapshot(
+        self,
+        date_str: str,
+        yt_subs: int,
+        ig_followers: int,
+        yt_views: int = 0,
+        ig_posts: int = 0,
+        notes: str = "",
+        source: str = "auto"
+    ) -> dict:
+        """Records or updates a historical audience snapshot for a given calendar date."""
+        now_str = datetime.now(timezone.utc).isoformat()
+        total = int(yt_subs) + int(ig_followers)
+        with self._get_connection() as conn:
+            conn.execute("""
+                INSERT INTO audience_snapshots (
+                    recorded_at, date, youtube_subscribers, instagram_followers,
+                    total_audience, youtube_views, instagram_posts, notes, source
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(date) DO UPDATE SET
+                    recorded_at=excluded.recorded_at,
+                    youtube_subscribers=excluded.youtube_subscribers,
+                    instagram_followers=excluded.instagram_followers,
+                    total_audience=excluded.total_audience,
+                    youtube_views=excluded.youtube_views,
+                    instagram_posts=excluded.instagram_posts,
+                    notes=excluded.notes,
+                    source=excluded.source
+            """, (
+                now_str,
+                date_str,
+                int(yt_subs),
+                int(ig_followers),
+                total,
+                int(yt_views),
+                int(ig_posts),
+                notes,
+                source
+            ))
+            conn.commit()
+
+        return {
+            "recorded_at": now_str,
+            "date": date_str,
+            "youtube_subscribers": int(yt_subs),
+            "instagram_followers": int(ig_followers),
+            "total_audience": total,
+            "youtube_views": int(yt_views),
+            "instagram_posts": int(ig_posts),
+            "notes": notes,
+            "source": source
+        }
+
+    def get_audience_snapshots(self, limit: int = 52) -> list:
+        """Returns recorded audience snapshots ordered chronologically (oldest to newest)."""
+        with self._get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT * FROM audience_snapshots
+                ORDER BY date ASC
+                LIMIT ?
+            """, (limit,))
+            return [dict(r) for r in cur.fetchall()]
+
+    def seed_audience_snapshots_if_empty(self, history_entries: list) -> int:
+        """Seeds historical snapshots from config/history list if table has fewer than 2 records."""
+        existing = self.get_audience_snapshots()
+        if len(existing) >= 2:
+            return 0
+
+        inserted = 0
+        for entry in history_entries:
+            if not isinstance(entry, dict) or "date" not in entry:
+                continue
+            self.record_audience_snapshot(
+                date_str=entry["date"],
+                yt_subs=int(entry.get("youtube_subs", 0)),
+                ig_followers=int(entry.get("instagram_followers", 0)),
+                notes="Seeded baseline milestone",
+                source="seed"
+            )
+            inserted += 1
+        return inserted
+

@@ -45,6 +45,16 @@ class YouTubeClient:
             pass
         return None
 
+    def get_live_subscriber_count(self) -> int:
+        """Fetches live subscriber count via public scraping, database cache, or config fallback."""
+        scraped = self._fetch_public_subscriber_count(self.config.my_channel_handle)
+        if scraped:
+            return scraped
+        my_ch = self.db.get_my_channel()
+        if my_ch and my_ch.get("subscriber_count"):
+            return my_ch["subscriber_count"]
+        return getattr(self.config, "my_channel_subscribers", 887)
+
     def _fetch_public_channel_uploads(self, channel_id: str, limit: int = 15) -> list:
         """Fetches public video metadata from the official YouTube channel RSS feed."""
         import xml.etree.ElementTree as ET

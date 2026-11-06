@@ -55,6 +55,13 @@ class InstagramClient:
             pass
         return {"followers": 282, "posts": 136}
 
+    def get_live_follower_count(self) -> int:
+        """Fetches live follower count via public scraping or config fallback."""
+        stats = self.fetch_public_profile_stats(self.config.my_instagram_handle)
+        if stats and stats.get("followers"):
+            return stats["followers"]
+        return getattr(self.config, "my_instagram_followers", 282)
+
     def sync_local_posts_file(self) -> bool:
         """Loads posts from config/my_instagram_posts.yaml if provided by user."""
         from pathlib import Path

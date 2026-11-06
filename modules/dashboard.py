@@ -26,16 +26,43 @@ class DashboardModule(BaseModule):
         fallback_subs = getattr(self.config, "my_channel_subscribers", 887)
         my_channel = self.db.get_my_channel() or {"subscriber_count": fallback_subs, "view_count": 82400}
 
+        # Check and initialize audience snapshots from persistent store / config
+        snapshots = self.db.get_audience_snapshots()
+        configured_history = self.config.raw.get("audience_history", [])
+        if len(snapshots) < 2 and configured_history:
+            self.db.seed_audience_snapshots_if_empty(configured_history)
+            snapshots = self.db.get_audience_snapshots()
+
         # 1. KPI Cards Computation
-        # Followers: Combined YouTube Subs + Instagram Followers (e.g. 887 + 282 = 1,169)
+        # Default baseline
         ig_followers = getattr(self.config, "my_instagram_followers", 282)
         yt_subs = my_channel.get("subscriber_count", fallback_subs)
+
+        # If snapshots exist, reflect the most recently recorded counts
+        if snapshots:
+            latest_snap = snapshots[-1]
+            yt_subs = latest_snap.get("youtube_subscribers", yt_subs)
+            ig_followers = latest_snap.get("instagram_followers", ig_followers)
+
         total_audience = ig_followers + yt_subs
 
-        # 30d Follower Delta
-        ig_delta_30d = sum(p.get("follows_gained", 0) for p in my_ig_posts)  # ~260 follows
-        yt_delta_30d = sum(v.get("sub_change", 0) for v in my_videos[:3])   # ~124 subs
-        combined_delta_30d = ig_delta_30d + yt_delta_30d
+        # 30d Follower Delta: Calculate from snapshot history if available, else sum video/post deltas
+        combined_delta_30d = None
+        if snapshots and len(snapshots) >= 2:
+            try:
+                latest_dt = datetime.strptime(snapshots[-1]["date"], "%Y-%m-%d")
+                thirty_days_ago = latest_dt - timedelta(days=30)
+                past_candidates = [s for s in snapshots if datetime.strptime(s["date"], "%Y-%m-%d") <= thirty_days_ago]
+                if past_candidates:
+                    baseline_snap = past_candidates[-1]
+                    combined_delta_30d = snapshots[-1]["total_audience"] - baseline_snap["total_audience"]
+            except Exception:
+                combined_delta_30d = None
+
+        if combined_delta_30d is None:
+            ig_delta_30d = sum(p.get("follows_gained", 0) for p in my_ig_posts)
+            yt_delta_30d = sum(v.get("sub_change", 0) for v in my_videos[:3])
+            combined_delta_30d = ig_delta_30d + yt_delta_30d
 
         # Average Reel plays
         reels = [p for p in my_ig_posts if p.get("format") == "REEL"]
@@ -54,13 +81,20 @@ class DashboardModule(BaseModule):
             "average_ctr_pct": avg_ctr
         }
 
-        # 2. Dynamic Follower & Subscriber Growth Trajectory (Last 90 Days)
-        # Correlates actual upload publish dates & deltas from SQLite without static clamps
+        # 2. Dynamic Follower & Subscriber Growth Trajectory
+        # Uses recorded audience snapshots from SQLite if available, else configured history, else backwards estimation
         growth_timeline = []
         now = datetime.now(timezone.utc)
-        configured_history = self.config.raw.get("audience_history", [])
 
-        if configured_history and len(configured_history) >= 2:
+        if snapshots and len(snapshots) >= 2:
+            for entry in snapshots:
+                growth_timeline.append({
+                    "date": entry["date"],
+                    "total_followers": entry.get("total_audience", entry.get("youtube_subscribers", 0) + entry.get("instagram_followers", 0)),
+                    "instagram_followers": entry.get("instagram_followers", 0),
+                    "youtube_subs": entry.get("youtube_subscribers", 0)
+                })
+        elif configured_history and len(configured_history) >= 2:
             for entry in configured_history:
                 yt_s = int(entry.get("youtube_subs", yt_subs))
                 ig_f = int(entry.get("instagram_followers", ig_followers))
@@ -198,6 +232,7 @@ class DashboardModule(BaseModule):
             "confidence": "HIGH",
             "kpis": kpis,
             "growth_timeline": growth_timeline,
+            "audience_snapshots": snapshots or [],
             "scatter_data": scatter_data,
             "heatmap_matrix": heatmap_matrix,
             "retention_chart_data": retention_chart_data,

@@ -110,6 +110,27 @@ def get_services():
     ig_client = InstagramClient(config, db, quota)
     gear_mgr = GearManager(config.gear_config_path)
     yt_client.initialize_data(force_refresh=False)
+
+    # Restore recorded snapshots from data/audience_snapshots.json if SQLite is fresh (e.g. Streamlit Cloud)
+    snap_json = Path(config.sqlite_db_path).parent / "audience_snapshots.json"
+    if snap_json.exists():
+        try:
+            with open(snap_json, "r") as f_snap:
+                saved = json.load(f_snap)
+            if saved and len(db.get_audience_snapshots()) < len(saved):
+                for s in saved:
+                    db.record_audience_snapshot(
+                        date_str=s["date"],
+                        yt_subs=s["youtube_subscribers"],
+                        ig_followers=s["instagram_followers"],
+                        yt_views=s.get("youtube_views", 0),
+                        ig_posts=s.get("instagram_posts", 0),
+                        notes=s.get("notes", "Restored from JSON backup"),
+                        source=s.get("source", "json_sync")
+                    )
+        except Exception:
+            pass
+
     return config, db, quota, yt_client, ig_client, gear_mgr
 
 config, db, quota, yt_client, ig_client, gear_mgr = get_services()
@@ -257,6 +278,43 @@ with tabs[0]:
         )
         fig_scatter.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=320, legend=dict(orientation="h", yanchor="bottom", y=1.02))
         st.plotly_chart(fig_scatter, use_container_width=True)
+
+    # Historical Snapshot Ledger & Weekly Run Trigger
+    with st.expander("📸 Recorded Audience Snapshots & Weekly History Ledger", expanded=False):
+        st.markdown("**Weekly Snapshot Ledger (Stored in SQLite `data/youtube_agent.db` & backup `data/audience_snapshots.json`)**")
+        snaps_list = d_data.get("audience_snapshots", [])
+        if snaps_list:
+            df_snaps = pd.DataFrame(snaps_list)[["date", "youtube_subscribers", "instagram_followers", "total_audience", "source"]]
+            df_snaps.columns = ["Date", "YouTube Subs", "Instagram Followers", "Total Audience", "Source"]
+            st.dataframe(df_snaps, use_container_width=True, hide_index=True)
+        else:
+            st.info("No snapshots recorded yet. Click below to take your first snapshot.")
+
+        col_sn1, col_sn2 = st.columns([1, 2])
+        with col_sn1:
+            if st.button("📸 Record Snapshot for Today", key="btn_take_snapshot", use_container_width=True):
+                yt_cnt = yt_client.get_live_subscriber_count()
+                ig_cnt = ig_client.get_live_follower_count()
+                ig_info = ig_client.fetch_public_profile_stats(config.my_instagram_handle)
+                t_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                my_ch = db.get_my_channel()
+                db.record_audience_snapshot(
+                    date_str=t_str,
+                    yt_subs=yt_cnt,
+                    ig_followers=ig_cnt,
+                    yt_views=my_ch.get("view_count", 0) if my_ch else 0,
+                    ig_posts=ig_info.get("posts", 136),
+                    notes="Recorded via Streamlit UI",
+                    source="ui_manual"
+                )
+                all_s = db.get_audience_snapshots()
+                j_path = Path(config.sqlite_db_path).parent / "audience_snapshots.json"
+                with open(j_path, "w") as f_snap:
+                    json.dump(all_s, f_snap, indent=2)
+                st.success(f"Snapshot recorded for {t_str}! YouTube: {yt_cnt:,} | Instagram: {ig_cnt:,}")
+                st.rerun()
+        with col_sn2:
+            st.caption("🤖 **Automated Weekly Run:** Run `python run.py --snapshot` via crontab or GitHub Actions. The app will automatically read the latest numbers from the database.")
 
     # Chart Row 2: Best Posting Hours Heatmap & CTR Bar Chart
     c_row2_1, c_row2_2 = st.columns([1.2, 1.0])

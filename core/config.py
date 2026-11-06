@@ -159,10 +159,16 @@ class Config:
         st_secrets = {}
         try:
             import streamlit as st
-            if hasattr(st, "secrets"):
-                st_secrets = st.secrets
+            try:
+                if hasattr(st, "secrets"):
+                    # Safely probe st.secrets without crashing if no secrets file exists
+                    for key in ["YOUTUBE_API_KEY", "INSTAGRAM_ACCESS_TOKEN", "INSTAGRAM_BUSINESS_ACCOUNT_ID"]:
+                        if key in st.secrets:
+                            st_secrets[key] = st.secrets[key]
+            except Exception:
+                st_secrets = {}
         except Exception:
-            pass
+            st_secrets = {}
 
         self.youtube_api_key = os.environ.get("YOUTUBE_API_KEY", str(st_secrets.get("YOUTUBE_API_KEY", ""))).strip()
         self.client_secrets_file = os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", "client_secrets.json")

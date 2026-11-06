@@ -122,6 +122,11 @@ def main():
         action="store_true",
         help="Force refresh channel and competitor cache"
     )
+    parser.add_argument(
+        "--snapshot",
+        action="store_true",
+        help="Record current YouTube subscriber and Instagram follower snapshot into SQLite and JSON"
+    )
 
     args = parser.parse_args()
 
@@ -147,6 +152,51 @@ def main():
     yt_client.initialize_data(force_refresh=args.refresh)
     if not config.use_mock_data:
         ig_client.sync_my_posts()
+
+    # Handle snapshot action
+    if args.snapshot:
+        print("[*] Recording Live Audience Snapshot...")
+        # Ensure prior milestones are seeded if table is new
+        configured_history = config.raw.get("audience_history", [])
+        if configured_history:
+            db.seed_audience_snapshots_if_empty(configured_history)
+
+        yt_subs = yt_client.get_live_subscriber_count()
+        ig_followers = ig_client.get_live_follower_count()
+        ig_stats = ig_client.fetch_public_profile_stats(config.my_instagram_handle)
+        ig_posts = ig_stats.get("posts", 136)
+        my_ch = db.get_my_channel()
+        yt_views = my_ch.get("view_count", 0) if my_ch else 0
+        from datetime import datetime, timezone
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+        snap = db.record_audience_snapshot(
+            date_str=today_str,
+            yt_subs=yt_subs,
+            ig_followers=ig_followers,
+            yt_views=yt_views,
+            ig_posts=ig_posts,
+            notes="Weekly audience snapshot",
+            source="weekly_snapshot"
+        )
+
+        # Export and backup to data/audience_snapshots.json
+        all_snaps = db.get_audience_snapshots()
+        json_file = Path(config.sqlite_db_path).parent / "audience_snapshots.json"
+        with open(json_file, "w") as f:
+            import json
+            json.dump(all_snaps, f, indent=2)
+
+        print("\n=======================================================")
+        print(f"📸 Audience Snapshot Recorded for {snap['date']}")
+        print(f"• YouTube Subscribers : {snap['youtube_subscribers']:,} ({config.my_channel_handle})")
+        print(f"• Instagram Followers : {snap['instagram_followers']:,} ({config.my_instagram_handle})")
+        print(f"• Total Audience      : {snap['total_audience']:,}")
+        print(f"• Historical Records  : {len(all_snaps)} snapshots stored")
+        print(f"• SQLite Database     : Updated ({config.sqlite_db_path})")
+        print(f"• JSON Snapshot File  : Saved ({json_file})")
+        print("=======================================================\n")
+        return
 
     # Determine actions if no module or report is explicitly given
     if not args.module and not args.daily_digest and not args.weekly_report and not args.report:

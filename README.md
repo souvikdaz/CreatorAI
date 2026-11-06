@@ -142,6 +142,9 @@ python3 run.py --module benchmark --mock
 python3 run.py --module shoot --mock
 python3 run.py --module dashboard --mock
 
+# Take a live audience snapshot (YouTube subs + Instagram followers)
+python3 run.py --snapshot
+
 # Filter by platform
 python3 run.py --platform instagram --report weekly --mock
 python3 run.py --platform youtube --daily-digest --mock
