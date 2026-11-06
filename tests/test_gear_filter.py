@@ -88,5 +88,22 @@ class TestGearFilter(unittest.TestCase):
             self.assertIn("why_kept_out_of_main_plan", item)
             self.assertIn("current_workaround", item)
 
+    def test_phone_spec_confirmation_removes_notice(self):
+        """Verifies that defining phone settings removes the unconfirmed warning notice."""
+        gm = GearManager()
+        # Default unconfirmed
+        self.assertFalse(gm.is_phone_spec_confirmed())
+        self.assertIn("Note on Phone Settings", gm.get_phone_spec_notice())
+
+        # When specs are provided
+        gm.gear["phone_settings"] = {
+            "resolution": "4K",
+            "frame_rate": "30fps",
+            "stabilization": "EIS On"
+        }
+        self.assertTrue(gm.is_phone_spec_confirmed())
+        self.assertEqual(gm.get_phone_spec_notice(), "")
+        self.assertEqual(gm.phone_settings["resolution"], "4K")
+
 if __name__ == "__main__":
     unittest.main()

@@ -143,6 +143,8 @@ class ShootPlannerModule(BaseModule):
             "confidence": confidence,
             "gear_manifest": gm.get_gear_manifest(),
             "phone_notice": phone_notice,
+            "phone_spec_confirmed": gm.is_phone_spec_confirmed(),
+            "phone_settings": gm.phone_settings,
             "planned_shoots_count": len(planned_shoots),
             "planned_shoots": planned_shoots,
             "needs_gear_optional": needs_gear_optional
@@ -163,7 +165,12 @@ class ShootPlannerModule(BaseModule):
         md.append(f"- **Computer & FX:** `{gm['authorized_workstation']}` running `{gm['authorized_video_editor']}`")
         md.append(f"- **Design:** `{gm['authorized_image_editor']}` (Free tier limits respected)\n")
 
-        md.append(f"> ⚠️ **Phone Configuration Notice:** {result['phone_notice']}\n")
+        if result.get("phone_notice"):
+            md.append(f"> ⚠️ **Phone Configuration Notice:** {result['phone_notice']}\n")
+        elif result.get("phone_spec_confirmed"):
+            ps = result.get("phone_settings", {})
+            ps_str = ", ".join(f"{k.replace('_', ' ').title()}: {v}" for k, v in ps.items())
+            md.append(f"> 📱 **Phone Settings Confirmed:** Motorola Edge 40 Neo ({ps_str})\n")
 
         md.append("## 📋 Planned Shoots (100% Compliant with `gear.yaml`)\n")
         for shoot in result["planned_shoots"]:

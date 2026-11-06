@@ -73,7 +73,29 @@ class GearManager:
 
     @property
     def phone(self) -> str:
-        return self.gear.get("phone", "Motorola Edge 40 Neo")
+        p = self.gear.get("phone", "Motorola Edge 40 Neo")
+        if isinstance(p, dict):
+            return p.get("model", "Motorola Edge 40 Neo")
+        return str(p)
+
+    @property
+    def phone_settings(self) -> dict:
+        """Returns confirmed phone camera settings if specified in gear.yaml."""
+        if "phone_settings" in self.gear and isinstance(self.gear["phone_settings"], dict):
+            return self.gear["phone_settings"]
+        if "phone_specs" in self.gear and isinstance(self.gear["phone_specs"], dict):
+            return self.gear["phone_specs"]
+        p = self.gear.get("phone")
+        if isinstance(p, dict):
+            return {k: v for k, v in p.items() if k != "model"}
+        return {}
+
+    def is_phone_spec_confirmed(self) -> bool:
+        """Checks if phone capture settings (resolution, frame rate, stabilization) are confirmed."""
+        ps = self.phone_settings
+        if not ps:
+            return False
+        return any(k in ps for k in ["resolution", "frame_rate", "fps", "framerate", "stabilization", "capture_profile", "profile"])
 
     @property
     def microphones(self) -> list:
@@ -119,7 +141,9 @@ class GearManager:
         return "Generic wired microphone"
 
     def get_phone_spec_notice(self) -> str:
-        """Mandatory notice: do not assume Motorola Edge 40 Neo specs."""
+        """Mandatory notice if unconfirmed. If confirmed in gear.yaml, returns empty string."""
+        if self.is_phone_spec_confirmed():
+            return ""
         return (
             "⚠️ Note on Phone Settings: Motorola Edge 40 Neo camera specs (resolution, frame rate, "
             "stabilization profile) are not assumed. Please confirm your exact preferred capture profile "

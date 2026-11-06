@@ -584,7 +584,12 @@ with tabs[5]:
     shoot_mod = ShootPlannerModule(config, db, quota)
     shoot_res = shoot_mod.run()
     st.subheader("🎬 Gear-Aware Shoot Planner (100% Compliant with `config/gear.yaml`)")
-    st.warning(shoot_res["phone_notice"])
+    if shoot_res.get("phone_notice"):
+        st.warning(shoot_res["phone_notice"])
+    elif shoot_res.get("phone_spec_confirmed"):
+        specs = shoot_res.get("phone_settings", {})
+        specs_str = " • ".join(f"**{k.replace('_', ' ').title()}:** {v}" for k, v in specs.items())
+        st.success(f"📱 **Motorola Edge 40 Neo Camera Profile Confirmed:** {specs_str}")
 
     for shoot in shoot_res["planned_shoots"]:
         with st.expander(f"#{shoot['id']}: {shoot['title']} ({shoot['format']})", expanded=True):
