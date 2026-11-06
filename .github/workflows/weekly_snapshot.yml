@@ -1,5 +1,4 @@
-name: Weekly Audience Snapshot                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                          
+name: Weekly Audience Snapshot
     on:                                                                                                                                                                                                                                                                   
       schedule:                                                                                                                                                                                                                                                           
         # 8:00 PM IST every Sunday (14:30 UTC)                                                                                                                                                                                                                            
