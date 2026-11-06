@@ -28,7 +28,7 @@ class SponsorshipModule(BaseModule):
             {
                 "avenue": "2. High-Intent Affiliate Programs",
                 "current_viability": "IMMEDIATE (Zero subscriber minimum)",
-                "target_programs": ["Amazon Associates India", "Store4Riders Affiliate", "Bikenbiker Affiliate", "Insta360 Official Affiliate Program"],
+                "target_programs": ["Amazon Associates India", "Store4Riders Affiliate", "Bikenbiker Affiliate", "DJI Official Affiliate Program"],
                 "audience_fit": "Extreme (68% of your viewers arrive via YouTube Search specifically looking for 'best action camera mount' and 'emergency puncture kit').",
                 "realistic_financial_model": "ESTIMATE: ₹4,000 - ₹12,000/month based on 5,000 views/video with 1.5% click-through to affiliate links and 3-5% e-commerce conversion on ₹2,000 average order value (relies on standard Amazon Associates 4-8% physical goods commission tiers).",
                 "next_action": "Sign up for Amazon Associates India; add structured, clean affiliate links in the top 3 lines of your top 3 highest-search videos immediately."

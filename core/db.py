@@ -86,6 +86,59 @@ class Database:
                     markdown_content TEXT NOT NULL
                 )
             """)
+
+            # Instagram posts table
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS instagram_posts (
+                    post_id TEXT PRIMARY KEY,
+                    caption TEXT,
+                    hashtags_json TEXT,
+                    format TEXT NOT NULL,
+                    duration_sec INTEGER DEFAULT 0,
+                    plays INTEGER DEFAULT 0,
+                    reach INTEGER DEFAULT 0,
+                    likes INTEGER DEFAULT 0,
+                    saves INTEGER DEFAULT 0,
+                    shares INTEGER DEFAULT 0,
+                    comments INTEGER DEFAULT 0,
+                    profile_visits INTEGER DEFAULT 0,
+                    follows_gained INTEGER DEFAULT 0,
+                    thumbnail_url TEXT,
+                    permalink TEXT,
+                    published_at TEXT NOT NULL,
+                    is_my_post INTEGER DEFAULT 1,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+
+            # Instagram competitor creators table
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS instagram_creators (
+                    handle TEXT PRIMARY KEY,
+                    name TEXT,
+                    followers_count INTEGER DEFAULT 0,
+                    posts_count INTEGER DEFAULT 0,
+                    avg_reach INTEGER DEFAULT 0,
+                    avg_engagement_rate REAL DEFAULT 0.0,
+                    top_formats_json TEXT,
+                    sample_posts_json TEXT,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+
+            # YouTube retention curves table for CTR / watch-time critique
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS youtube_retention_curves (
+                    video_id TEXT PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    ctr REAL DEFAULT 0.0,
+                    avg_view_duration_sec REAL DEFAULT 0.0,
+                    avg_percentage_viewed REAL DEFAULT 0.0,
+                    retention_curve_json TEXT,
+                    drop_off_points_json TEXT,
+                    updated_at TEXT NOT NULL
+                )
+            """)
             conn.commit()
 
     def upsert_channel(self, channel: dict):
@@ -263,3 +316,141 @@ class Database:
                     "markdown": row["markdown_content"]
                 }
             return None
+
+    # --- Instagram Methods ---
+    def upsert_instagram_post(self, post: dict):
+        now_str = datetime.now(timezone.utc).isoformat()
+        hashtags_json = json.dumps(post.get("hashtags", [])) if isinstance(post.get("hashtags"), list) else (post.get("hashtags_json") or "[]")
+        with self._get_connection() as conn:
+            conn.execute("""
+                INSERT INTO instagram_posts (
+                    post_id, caption, hashtags_json, format, duration_sec,
+                    plays, reach, likes, saves, shares, comments,
+                    profile_visits, follows_gained, thumbnail_url, permalink,
+                    published_at, is_my_post, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(post_id) DO UPDATE SET
+                    caption=excluded.caption,
+                    hashtags_json=excluded.hashtags_json,
+                    format=excluded.format,
+                    duration_sec=excluded.duration_sec,
+                    plays=excluded.plays,
+                    reach=excluded.reach,
+                    likes=excluded.likes,
+                    saves=excluded.saves,
+                    shares=excluded.shares,
+                    comments=excluded.comments,
+                    profile_visits=excluded.profile_visits,
+                    follows_gained=excluded.follows_gained,
+                    thumbnail_url=excluded.thumbnail_url,
+                    permalink=excluded.permalink,
+                    published_at=excluded.published_at,
+                    is_my_post=excluded.is_my_post,
+                    updated_at=excluded.updated_at
+            """, (
+                post["post_id"],
+                post.get("caption", ""),
+                hashtags_json,
+                post.get("format", "REEL"),
+                int(post.get("duration_sec", 0)),
+                int(post.get("plays", 0)),
+                int(post.get("reach", 0)),
+                int(post.get("likes", 0)),
+                int(post.get("saves", 0)),
+                int(post.get("shares", 0)),
+                int(post.get("comments", 0)),
+                int(post.get("profile_visits", 0)),
+                int(post.get("follows_gained", 0)),
+                post.get("thumbnail_url", ""),
+                post.get("permalink", ""),
+                post.get("published_at", now_str),
+                1 if post.get("is_my_post", True) else 0,
+                now_str
+            ))
+            conn.commit()
+
+    def get_my_instagram_posts(self, limit: int = 10) -> list:
+        with self._get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT * FROM instagram_posts
+                WHERE is_my_post = 1
+                ORDER BY published_at DESC
+                LIMIT ?
+            """, (limit,))
+            return [dict(r) for r in cur.fetchall()]
+
+    def upsert_instagram_creator(self, creator: dict):
+        now_str = datetime.now(timezone.utc).isoformat()
+        top_f_json = json.dumps(creator.get("top_formats", [])) if isinstance(creator.get("top_formats"), list) else (creator.get("top_formats_json") or "[]")
+        sample_p_json = json.dumps(creator.get("sample_posts", [])) if isinstance(creator.get("sample_posts"), list) else (creator.get("sample_posts_json") or "[]")
+        with self._get_connection() as conn:
+            conn.execute("""
+                INSERT INTO instagram_creators (
+                    handle, name, followers_count, posts_count, avg_reach,
+                    avg_engagement_rate, top_formats_json, sample_posts_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(handle) DO UPDATE SET
+                    name=excluded.name,
+                    followers_count=excluded.followers_count,
+                    posts_count=excluded.posts_count,
+                    avg_reach=excluded.avg_reach,
+                    avg_engagement_rate=excluded.avg_engagement_rate,
+                    top_formats_json=excluded.top_formats_json,
+                    sample_posts_json=excluded.sample_posts_json,
+                    updated_at=excluded.updated_at
+            """, (
+                creator["handle"],
+                creator.get("name", creator["handle"]),
+                int(creator.get("followers_count", 0)),
+                int(creator.get("posts_count", 0)),
+                int(creator.get("avg_reach", 0)),
+                float(creator.get("avg_engagement_rate", 0.0)),
+                top_f_json,
+                sample_p_json,
+                now_str
+            ))
+            conn.commit()
+
+    def get_competitor_instagram_creators(self) -> list:
+        with self._get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM instagram_creators ORDER BY followers_count DESC")
+            return [dict(r) for r in cur.fetchall()]
+
+    # --- YouTube Retention & CTR Methods ---
+    def upsert_retention_curve(self, curve: dict):
+        now_str = datetime.now(timezone.utc).isoformat()
+        curve_json = json.dumps(curve.get("retention_curve", [])) if isinstance(curve.get("retention_curve"), list) else (curve.get("retention_curve_json") or "[]")
+        drops_json = json.dumps(curve.get("drop_off_points", [])) if isinstance(curve.get("drop_off_points"), list) else (curve.get("drop_off_points_json") or "[]")
+        with self._get_connection() as conn:
+            conn.execute("""
+                INSERT INTO youtube_retention_curves (
+                    video_id, title, ctr, avg_view_duration_sec,
+                    avg_percentage_viewed, retention_curve_json, drop_off_points_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(video_id) DO UPDATE SET
+                    title=excluded.title,
+                    ctr=excluded.ctr,
+                    avg_view_duration_sec=excluded.avg_view_duration_sec,
+                    avg_percentage_viewed=excluded.avg_percentage_viewed,
+                    retention_curve_json=excluded.retention_curve_json,
+                    drop_off_points_json=excluded.drop_off_points_json,
+                    updated_at=excluded.updated_at
+            """, (
+                curve["video_id"],
+                curve.get("title", ""),
+                float(curve.get("ctr", 0.0)),
+                float(curve.get("avg_view_duration_sec", 0.0)),
+                float(curve.get("avg_percentage_viewed", 0.0)),
+                curve_json,
+                drops_json,
+                now_str
+            ))
+            conn.commit()
+
+    def get_retention_curves(self, limit: int = 5) -> list:
+        with self._get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM youtube_retention_curves ORDER BY updated_at DESC LIMIT ?", (limit,))
+            return [dict(r) for r in cur.fetchall()]

@@ -11,6 +11,8 @@ from core.config import Config
 from core.db import Database
 from core.quota import QuotaManager
 from core.youtube_client import YouTubeClient
+from core.instagram_client import InstagramClient
+
 from modules.ideas import VideoIdeasModule
 from modules.metadata import MetadataModule
 from modules.timing import TimingModule
@@ -18,10 +20,26 @@ from modules.competitors import CompetitorInsightsModule
 from modules.repurpose import RepurposeModule
 from modules.sponsors import SponsorshipModule
 from modules.monetization import MonetizationAccelerationModule
+
+from modules.audit import ContentAuditModule
+from modules.ctr import CTRCritiqueModule
+from modules.growth import FollowerGrowthModule
+from modules.benchmark import NicheBenchmarkModule
+from modules.shoot import ShootPlannerModule
+from modules.dashboard import DashboardModule
+
 from reports.daily_digest import DailyDigestGenerator
 from reports.weekly_report import WeeklyReportGenerator
 
 MODULE_MAP = {
+    # Instagram & Cross-Platform Priority Modules
+    "audit": ContentAuditModule,
+    "ctr": CTRCritiqueModule,
+    "growth": FollowerGrowthModule,
+    "benchmark": NicheBenchmarkModule,
+    "shoot": ShootPlannerModule,
+    "dashboard": DashboardModule,
+    # YouTube Core Modules
     "ideas": VideoIdeasModule,
     "metadata": MetadataModule,
     "timing": TimingModule,
@@ -31,16 +49,40 @@ MODULE_MAP = {
     "monetization": MonetizationAccelerationModule
 }
 
+PLATFORM_MODULE_DEFAULTS = {
+    "instagram": ["audit", "ctr", "growth", "benchmark", "shoot", "dashboard"],
+    "youtube": ["ideas", "metadata", "timing", "competitors", "repurpose", "sponsors", "monetization"],
+    "both": [
+        "audit", "ctr", "growth", "benchmark", "shoot", "dashboard",
+        "ideas", "metadata", "timing", "competitors", "repurpose", "sponsors", "monetization"
+    ]
+}
+
 def main():
     parser = argparse.ArgumentParser(
-        description="YouTube Social Media Manager Agent (Data API v3 & Analytics API)",
+        description="YouTube & Instagram Social Media Manager Agent (Graph API & Data API v3)",
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
         "--module",
-        choices=["all", "ideas", "metadata", "timing", "competitors", "repurpose", "sponsors", "monetization"],
+        choices=[
+            "all", "audit", "ctr", "growth", "benchmark", "shoot", "dashboard",
+            "ideas", "metadata", "timing", "competitors", "repurpose", "sponsors", "monetization"
+        ],
         default=None,
         help="Run a specific strategy module or 'all'"
+    )
+    parser.add_argument(
+        "--platform",
+        choices=["instagram", "youtube", "both"],
+        default="both",
+        help="Target platform scope (default: both)"
+    )
+    parser.add_argument(
+        "--report",
+        choices=["weekly", "daily"],
+        default=None,
+        help="Generate consolidated report ('weekly' or 'daily')"
     )
     parser.add_argument(
         "--daily-digest",
@@ -50,7 +92,7 @@ def main():
     parser.add_argument(
         "--weekly-report",
         action="store_true",
-        help="Generate the comprehensive 7-module weekly audit report"
+        help="Generate the comprehensive weekly audit report"
     )
     parser.add_argument(
         "--mock",
@@ -83,11 +125,6 @@ def main():
 
     args = parser.parse_args()
 
-    # If no flags passed, show help or run all by default
-    if not args.module and not args.daily_digest and not args.weekly_report:
-        print("[Agent] No specific module selected. Running full suite (--module all)...")
-        args.module = "all"
-
     # 1. Load Config & Resources
     config = Config(config_path=args.config)
     if args.mock:
@@ -95,20 +132,33 @@ def main():
 
     db = Database(config.sqlite_db_path)
     quota = QuotaManager(config.sqlite_db_path, daily_limit=config.quota_daily_limit)
-    client = YouTubeClient(config, db, quota)
+    yt_client = YouTubeClient(config, db, quota)
+    ig_client = InstagramClient(config, db, quota)
 
     print(f"\n=======================================================")
-    print(f"🎬 YouTube Social Media Manager Agent")
-    print(f"Channel: {config.my_channel_id} | Timezone: {config.timezone}")
-    print(f"Mode: {'MOCK DATASET' if config.use_mock_data or not config.youtube_api_key else 'LIVE API v3'}")
+    print(f"🎬 Dual-Platform Social Media Manager Agent")
+    print(f"YouTube: {config.my_channel_id} | Instagram: {config.my_instagram_handle}")
+    print(f"Timezone: {config.timezone} | Platform Scope: {args.platform.upper()}")
+    print(f"Gear Source: {config.gear_config_path}")
+    print(f"Mode: {'MOCK DATASET' if config.use_mock_data or not config.youtube_api_key else 'LIVE APIs'}")
     print(f"=======================================================\n")
 
     # Initialize data cache
-    client.initialize_data(force_refresh=args.refresh)
+    yt_client.initialize_data(force_refresh=args.refresh)
+    if not config.use_mock_data:
+        ig_client.sync_my_posts()
+
+    # Determine actions if no module or report is explicitly given
+    if not args.module and not args.daily_digest and not args.weekly_report and not args.report:
+        print("[Agent] No specific module selected. Running default suite for platform scope...")
+        args.module = "all"
 
     # 2. Run Module(s)
     if args.module:
-        target_keys = list(MODULE_MAP.keys()) if args.module == "all" else [args.module]
+        if args.module == "all":
+            target_keys = PLATFORM_MODULE_DEFAULTS.get(args.platform, PLATFORM_MODULE_DEFAULTS["both"])
+        else:
+            target_keys = [args.module]
 
         for mod_key in target_keys:
             mod_class = MODULE_MAP[mod_key]
@@ -125,23 +175,23 @@ def main():
             # Print concise preview if single module
             if len(target_keys) == 1:
                 print(f"\n--- Preview: {mod_key.upper()} ---\n")
-                print(md_text[:1200])
-                if len(md_text) > 1200:
+                print(md_text[:1400])
+                if len(md_text) > 1400:
                     print(f"\n... [Full output saved to {args.output_dir}/{mod_key}.md]")
 
     # 3. Generate Daily Digest
-    if args.daily_digest:
+    if args.daily_digest or args.report == "daily":
         print("\n[*] Generating Daily Channel Action Digest...")
         digest_gen = DailyDigestGenerator(config, db, quota)
-        digest_text = digest_gen.generate(output_dir=args.output_dir)
+        digest_text = digest_gen.generate(output_dir=args.output_dir, platform=args.platform)
         print(f"    -> Exported: {args.output_dir}/daily_digest.md\n")
         print(digest_text)
 
     # 4. Generate Weekly Report
-    if args.weekly_report or args.module == "all":
-        print("\n[*] Generating Comprehensive Weekly Report (All 7 Modules)...")
+    if args.weekly_report or args.report == "weekly" or args.module == "all":
+        print("\n[*] Generating Comprehensive Weekly Dual-Platform Report...")
         weekly_gen = WeeklyReportGenerator(config, db, quota)
-        weekly_text = weekly_gen.generate(output_dir=args.output_dir)
+        weekly_text = weekly_gen.generate(output_dir=args.output_dir, platform=args.platform)
         print(f"    -> Exported: {args.output_dir}/weekly_report.md")
 
     # 5. Print Quota Summary

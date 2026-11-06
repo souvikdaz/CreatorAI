@@ -1,0 +1,14 @@
+# GEAR AND TOOLS CONFIGURATION
+# This is the single source of truth for all hardware and software suggestions.
+# The agent will NEVER suggest any gear, camera, bike, mic, editor, or tool outside this list.
+
+bike: Himalayan 450
+action_camera: DJI Osmo Action 3
+phone: Motorola Edge 40 Neo
+microphones:
+  - Generic wired microphone
+  - Grenaro wireless microphone
+computer: Apple Mac Mini M4
+video_editing_fx: Final Cut Pro
+image_editing: Canva (Free tier)
+other: []

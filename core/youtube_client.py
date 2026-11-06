@@ -28,13 +28,19 @@ class YouTubeClient:
         if existing_my and not force:
             return
 
-        print("[YouTubeClient] Initializing sample/mock dataset for channel & competitors...")
+        print("[YouTubeClient] Initializing sample/mock dataset for channel, Instagram & competitors...")
         seed = get_mock_database_seed(self.config.my_channel_id)
-        for ch in seed["channels"]:
+        for ch in seed.get("channels", []):
             self.db.upsert_channel(ch)
-        for vid in seed["videos"]:
+        for vid in seed.get("videos", []):
             self.db.upsert_video(vid)
-        print(f"[YouTubeClient] Successfully loaded {len(seed['channels'])} channels and {len(seed['videos'])} videos into SQLite cache.")
+        for ig_post in seed.get("instagram_posts", []):
+            self.db.upsert_instagram_post(ig_post)
+        for ig_creator in seed.get("instagram_creators", []):
+            self.db.upsert_instagram_creator(ig_creator)
+        for curve in seed.get("youtube_retention_curves", []):
+            self.db.upsert_retention_curve(curve)
+        print(f"[YouTubeClient] Successfully loaded {len(seed.get('channels', []))} channels, {len(seed.get('videos', []))} videos, {len(seed.get('instagram_posts', []))} IG posts, and {len(seed.get('youtube_retention_curves', []))} retention curves into SQLite cache.")
 
     def _sync_live_data(self, force: bool = False):
         """Syncs my channel and competitors using YouTube Data API v3."""

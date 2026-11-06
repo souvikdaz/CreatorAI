@@ -1,5 +1,7 @@
-# Channel & API configuration
+# Platform & Identity Configuration
 my_channel_id: "UCu2EoFcaIV7rqAXvG9rcUiQ"
+my_instagram_handle: "@mototechexplorer"
+my_instagram_business_account_id: "17841400000000000"
 
 niche_keywords:
   - "motovlog"
@@ -9,6 +11,7 @@ niche_keywords:
   - "gadgets"
   - "bike trips"
 
+# YouTube Competitors
 competitor_channel_ids:
   - "https://www.youtube.com/@SwatiRojha"
   - "https://www.youtube.com/@deepranjansachan"
@@ -16,8 +19,26 @@ competitor_channel_ids:
   - "https://www.youtube.com/@dReamwAlk"
   - "https://www.youtube.com/@throttleyourlife"
 
+# Instagram Competitor Accounts (10-20 accounts in motorcycle-travel & tech niche)
+competitor_instagram_handles:
+  - "@swati_rojha"
+  - "@deepranjansachan"
+  - "@deepteshlovestech"
+  - "@dreamwalk_official"
+  - "@throttleyourlife"
+  - "@nomadic_tourer_india"
+  - "@adv_himalayan_riders"
+  - "@rider_girl_vishakha"
+  - "@strell_moto"
+  - "@bulu_biker"
+  - "@biker_souls_india"
+  - "@tech_gadget_rider"
+
 timezone: "Asia/Kolkata"  # Indian Standard Time (IST)
 audience_country: "Global"
+
+# Gear & Tools path
+gear_config_path: "config/gear.yaml"
 
 # Quota & Cache settings
 quota_daily_limit: 10000

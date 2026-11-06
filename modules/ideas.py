@@ -22,12 +22,12 @@ class VideoIdeasModule(BaseModule):
                 "my_coverage": 0
             },
             "Long-Term Ownership & Mechanical Truth": {
-                "keywords": ["truth", "review", "ownership", "maintenance", "servicing", "dont buy", "himalayan 450", "ktm 390"],
+                "keywords": ["truth", "review", "ownership", "maintenance", "servicing", "dont buy", "himalayan 450", "engine"],
                 "competitor_vids": [],
                 "my_coverage": 0
             },
             "Action Cameras & Tech Gadgets": {
-                "keywords": ["insta360", "gopro", "action camera", "gadgets", "mount", "audio", "mic", "carplay", "gps"],
+                "keywords": ["dji osmo", "osmo action", "action camera", "gadgets", "mount", "audio", "mic", "carplay", "gps"],
                 "competitor_vids": [],
                 "my_coverage": 0
             },
@@ -83,9 +83,9 @@ class VideoIdeasModule(BaseModule):
             {
                 "id": 1,
                 "cluster": "Action Cameras & Tech Gadgets",
-                "title_concept": "Insta360 vs GoPro on Himalayan 450: The Honest Motovlog Audio & Mount Test",
+                "title_concept": "DJI Osmo Action 3 on Himalayan 450: The Honest Motovlog Audio & Mount Test",
                 "target_keyword": "action camera for motovlogging",
-                "hook": "Before you spend ₹45,000 on an action camera for your bike, here is the audio test at 100 km/h they don't show you.",
+                "hook": "Before you take your DJI Osmo Action 3 on mountain tours, here is the audio test at 100 km/h with the Grenaro wireless mic.",
                 "rationale": "Competitor Tech videos average 6,553 views/day velocity. Channel has only 1 mic setup video; search traffic in automotive tech has 62%+ search volume.",
                 "gap_urgency": "HIGH",
                 "suggested_format": "Split-screen side-by-side riding test"
@@ -182,13 +182,27 @@ class VideoIdeasModule(BaseModule):
             }
         ]
 
+        needs_gear_optional = [
+            {
+                "concept": "360-Degree Third-Person Follow Cam",
+                "missing_gear": "Dedicated 360 Action Camera",
+                "reason": "Not listed in config/gear.yaml. Current plan uses DJI Osmo Action 3 with RockSteady."
+            },
+            {
+                "concept": "Aerial Mountain Valley Drone Scenics",
+                "missing_gear": "Compact Drone",
+                "reason": "Not listed in config/gear.yaml. Current plan uses Motorola Edge 40 Neo on elevated mountain vantage points."
+            }
+        ]
+
         return {
             "module": self.name,
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "data_source": data_source,
             "confidence": confidence,
             "cluster_gap_analysis": cluster_stats,
-            "ideas": ideas
+            "ideas": ideas,
+            "needs_gear_optional": needs_gear_optional
         }
 
     def to_markdown(self, result: dict) -> str:
@@ -203,7 +217,7 @@ class VideoIdeasModule(BaseModule):
         for c in result.get("cluster_gap_analysis", []):
             md.append(f"| {c['cluster']} | {c['competitor_video_count']} | {c['avg_view_velocity']:,} | {c['my_coverage_count']} | **{c['gap_score']:.1f}** |")
 
-        md.append("\n## 🎯 10 Data-Backed Video Ideas\n")
+        md.append("\n## 🎯 10 Data-Backed Video Ideas (100% Compliant with `config/gear.yaml`)\n")
         for idea in result.get("ideas", []):
             md.append(f"### {idea['id']}. {idea['title_concept']}")
             md.append(f"- **Cluster:** {idea['cluster']} (Urgency: `{idea['gap_urgency']}`)")
@@ -211,5 +225,11 @@ class VideoIdeasModule(BaseModule):
             md.append(f"- **Hook Line (First 5s):** *\"{idea['hook']}\"*")
             md.append(f"- **Data Rationale:** {idea['rationale']}")
             md.append(f"- **Suggested Format:** {idea['suggested_format']}\n")
+
+        md.append("## 📦 Needs gear (optional)")
+        md.append("*The following concepts are kept out of the main plan as they require gear not listed in `config/gear.yaml`:*\n")
+        for og in result.get("needs_gear_optional", []):
+            md.append(f"- **{og['concept']}** (Missing: `{og['missing_gear']}`) → *{og['reason']}*")
+        md.append("")
 
         return "\n".join(md)

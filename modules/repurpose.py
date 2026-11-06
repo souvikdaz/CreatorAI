@@ -52,7 +52,7 @@ class RepurposeModule(BaseModule):
                 "timestamp_range": f"{self.format_timestamp(135)} - {self.format_timestamp(180)} (45s)",
                 "shorts_title": "Camera Dead at -4°C? Do THIS Instead!",
                 "hook_line": "Your action camera battery dies in 8 mins in Ladakh... unless you do this.",
-                "caption": "How to keep your camera alive at -4°C in Spiti & Ladakh! 🥶 Never lose your ride footage. #motovlog #ladakh #goprohack #actioncamera #himalayan450 #biketrip",
+                "caption": "How to keep your camera alive at -4°C in Spiti & Ladakh! 🥶 Never lose your ride footage. #motovlog #ladakh #actioncamerahack #djiosmoaction3 #himalayan450 #biketrip",
                 "vertical_crop_notes": "Center-crop to 9:16. In the first 4 seconds, punch in 120% on the rider's frozen visor, then cut to chest pocket where batteries are kept warm. Keep on-screen captions within the middle 60% vertical safe zone."
             },
             {

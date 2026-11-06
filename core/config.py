@@ -124,10 +124,25 @@ class Config:
             raw_comps = list(raw_competitors)
         self.competitor_channel_ids = [extract_channel_identifier(c) for c in raw_comps if c]
 
+        # Instagram configuration
+        self.my_instagram_handle = str(raw_cfg.get("my_instagram_handle", "@mototechexplorer"))
+        self.my_instagram_business_account_id = str(raw_cfg.get("my_instagram_business_account_id", "17841400000000000"))
+        raw_ig_comps = raw_cfg.get("competitor_instagram_handles", [])
+        if isinstance(raw_ig_comps, str):
+            self.competitor_instagram_handles = [h.strip() for h in raw_ig_comps.split(",")]
+        else:
+            self.competitor_instagram_handles = list(raw_ig_comps)
+
         self.timezone = raw_cfg.get("timezone", "Asia/Kolkata")
         self.audience_country = raw_cfg.get("audience_country", "Global")
         self.quota_daily_limit = int(raw_cfg.get("quota_daily_limit", 10000))
         self.cache_ttl_hours = int(raw_cfg.get("cache_ttl_hours", 24))
+
+        # Gear configuration
+        gear_rel = raw_cfg.get("gear_config_path", "config/gear.yaml")
+        self.gear_config_path = str(self.base_dir / gear_rel)
+        from core.gear_manager import GearManager
+        self.gear_manager = GearManager(self.gear_config_path)
 
         db_rel = raw_cfg.get("sqlite_db_path", "data/youtube_agent.db")
         self.sqlite_db_path = str(self.base_dir / db_rel)
@@ -136,19 +151,28 @@ class Config:
         self.youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "").strip()
         self.client_secrets_file = os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", "client_secrets.json")
         self.oauth_token_file = os.environ.get("YOUTUBE_OAUTH_TOKEN_FILE", "token.json")
+        self.instagram_access_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "").strip()
+        self.instagram_business_account_id = str(os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", self.my_instagram_business_account_id)).strip()
         self.use_mock_data = os.environ.get("USE_MOCK_DATA", "").lower() in ("true", "1", "yes")
 
     def is_api_configured(self) -> bool:
-        """Returns True if YouTube API key is set."""
+        """Returns True if YouTube or Instagram API credentials are configured."""
         return bool(self.youtube_api_key and not self.use_mock_data)
+
+    def is_instagram_configured(self) -> bool:
+        """Returns True if Instagram access token is present."""
+        return bool(self.instagram_access_token and not self.use_mock_data)
 
     def summary(self) -> dict:
         return {
             "my_channel_id": self.my_channel_id,
+            "my_instagram_handle": self.my_instagram_handle,
             "niche_keywords_count": len(self.niche_keywords),
-            "competitors_count": len(self.competitor_channel_ids),
+            "youtube_competitors_count": len(self.competitor_channel_ids),
+            "instagram_competitors_count": len(self.competitor_instagram_handles),
             "timezone": self.timezone,
             "audience_country": self.audience_country,
-            "api_key_configured": bool(self.youtube_api_key),
+            "youtube_api_key_configured": bool(self.youtube_api_key),
+            "instagram_token_configured": bool(self.instagram_access_token),
             "mock_mode": not self.is_api_configured()
         }
