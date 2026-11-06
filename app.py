@@ -539,10 +539,11 @@ with tabs[8]:
     t1 = mon_res["tier_1_fan_funding_gap"]
     t2 = mon_res["tier_2_ad_revenue_gap"]
 
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Subscribers", f"{curr['subscribers']:,} / 500", f"{t1['subscribers_needed']} to Tier 1")
-    m2.metric("Watch Hours (365d)", f"{curr['estimated_watch_hours_365d']:,} / 3,000 hrs", f"{t1['watch_hours_needed']:,} hrs to Tier 1")
-    m3.metric("Uploads (90d)", f"{curr['public_uploads_90d']} / 3", "MET (Eligible)")
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Subscribers", f"{curr['subscribers']:,} / 1,000", f"{t2['subscribers_needed']} to Tier 2 (500 Met)")
+    m2.metric("Watch Hours (365d)", f"{curr['public_watch_hours_365d']:,} / 3,000 hrs", f"{t1['watch_hours_needed']:,} hrs to Tier 1")
+    m3.metric("Shorts View Hours (90d)", f"{curr['shorts_watch_hours_90d']:,} hrs", "Studio Verified")
+    m4.metric("Uploads (90d)", f"{curr['public_uploads_90d']} / 3", "MET (Eligible)")
 
     st.markdown("#### 🗓️ 90-Day Step-by-Step Action Plan")
     for phase in mon_res["ninety_day_plan"]:

@@ -113,6 +113,8 @@ class Config:
         self.my_channel_handle = str(raw_cfg.get("my_channel_handle", "@SouvikSays")).strip()
         self.my_channel_title = str(raw_cfg.get("my_channel_title", "Souvik Says")).strip()
         self.my_channel_subscribers = int(raw_cfg.get("my_channel_subscribers", 887))
+        self.my_channel_watch_hours = float(raw_cfg.get("my_channel_watch_hours", 188.0))
+        self.my_channel_shorts_hours = float(raw_cfg.get("my_channel_shorts_hours", 87.0))
 
         raw_niche = raw_cfg.get("niche_keywords", [])
         if isinstance(raw_niche, str):
