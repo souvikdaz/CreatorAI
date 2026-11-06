@@ -27,8 +27,8 @@ class DashboardModule(BaseModule):
         my_channel = self.db.get_my_channel() or {"subscriber_count": fallback_subs, "view_count": 82400}
 
         # 1. KPI Cards Computation
-        # Followers: Combined YouTube Subs + Instagram Followers (e.g. 887 + 1,850 = 2,737)
-        ig_followers = 1850
+        # Followers: Combined YouTube Subs + Instagram Followers (e.g. 887 + 282 = 1,169)
+        ig_followers = getattr(self.config, "my_instagram_followers", 282)
         yt_subs = my_channel.get("subscriber_count", fallback_subs)
         total_audience = ig_followers + yt_subs
 

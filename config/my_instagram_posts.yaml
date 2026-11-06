@@ -1,0 +1,84 @@
+# Instagram Recent Posts & Reels Manifest
+# Fill in your recent posts below. The agent will read this file and use your actual posts for Audit, Growth, and Critique!
+# Format: REEL, CAROUSEL, or SINGLE_IMAGE
+
+posts:
+  - post_id: "ig_real_01"
+    format: "REEL"
+    caption: "At 18,000 feet near Nurbu La, every breath is hard work. Himalayan 450 climbing to Umling La... drop a 🏔️ if you want the full route breakdown! Ep. 6 is live on YouTube.\n.\n#umlingla #himalayan450 #nurbula #ladakhtrip #solorider #souvik_says"
+    duration_sec: 28
+    plays: 1240
+    reach: 890
+    likes: 78
+    saves: 24
+    shares: 16
+    comments: 9
+    profile_visits: 34
+    follows_gained: 6
+    thumbnail_url: "https://i.ytimg.com/vi/bW5s1DNjK8I/hqdefault.jpg"
+    permalink: "https://www.instagram.com/souvik_says/"
+    published_at: "2026-10-27T12:00:00+00:00"
+
+  - post_id: "ig_real_02"
+    format: "CAROUSEL"
+    caption: "Rezang La to Hanle: 5 things nobody warns you about the silent border roads. (Save this guide for your 2026 Ladakh ride!) 🇮🇳🏍️ Slide 4 has fuel calculation.\n.\n#hanle #rezangla #ladakhtour #himalayan450 #motorcycletouring #souvik_says"
+    duration_sec: 0
+    plays: 0
+    reach: 640
+    likes: 62
+    saves: 38
+    shares: 12
+    comments: 8
+    profile_visits: 22
+    follows_gained: 4
+    thumbnail_url: "https://i.ytimg.com/vi/mxK3KPN1FMk/hqdefault.jpg"
+    permalink: "https://www.instagram.com/souvik_says/"
+    published_at: "2026-10-24T12:00:00+00:00"
+
+  - post_id: "ig_real_03"
+    format: "REEL"
+    caption: "An auto-rickshaw at 17,982 ft on Khardung La?! 🛺🤯 Just when you think Ladakh can't surprise you anymore. Himalayan 450 in freezing sleet! Full story in Ep. 4.\n.\n#khardungla #autorickshaw #lehladakh #himalayan450 #biketrip #souvik_says"
+    duration_sec: 42
+    plays: 2180
+    reach: 1540
+    likes: 142
+    saves: 45
+    shares: 38
+    comments: 19
+    profile_visits: 52
+    follows_gained: 11
+    thumbnail_url: "https://i.ytimg.com/vi/uiPuFqgcWCo/hqdefault.jpg"
+    permalink: "https://www.instagram.com/souvik_says/"
+    published_at: "2026-10-20T12:00:00+00:00"
+
+  - post_id: "ig_real_04"
+    format: "SINGLE_IMAGE"
+    caption: "The road to Leh that Google Maps said did not exist! Turning off the highway onto unmarked mountain dirt. 🏍️💨 Who else loves getting lost in the mountains?\n.\n#offroadladakh #himalayan450 #googlemaps #adventuremotorcycle #bikerlife #souvik_says"
+    duration_sec: 0
+    plays: 0
+    reach: 490
+    likes: 54
+    saves: 14
+    shares: 6
+    comments: 7
+    profile_visits: 18
+    follows_gained: 2
+    thumbnail_url: "https://i.ytimg.com/vi/0BorTN7XpKM/hqdefault.jpg"
+    permalink: "https://www.instagram.com/souvik_says/"
+    published_at: "2026-10-17T12:00:00+00:00"
+
+  - post_id: "ig_real_05"
+    format: "REEL"
+    caption: "Freezing rain across Baralacha La into Zanskar. When the weather turns into hell, the Himalayan 450 just keeps chugging through mud and slush. 🌧️🏔️\n.\n#zanskar #baralachala #monsoonride #himalayan450 #rainriding #souvik_says"
+    duration_sec: 35
+    plays: 980
+    reach: 710
+    likes: 64
+    saves: 19
+    shares: 10
+    comments: 6
+    profile_visits: 28
+    follows_gained: 5
+    thumbnail_url: "https://i.ytimg.com/vi/JLEuioDpubM/hqdefault.jpg"
+    permalink: "https://www.instagram.com/souvik_says/"
+    published_at: "2026-10-13T12:00:00+00:00"

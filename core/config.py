@@ -130,6 +130,8 @@ class Config:
         # Instagram configuration
         raw_ig_handle = str(raw_cfg.get("my_instagram_handle", "@souvik_says")).strip()
         self.my_instagram_handle = raw_ig_handle if raw_ig_handle.startswith("@") else f"@{raw_ig_handle}"
+        self.my_instagram_followers = int(raw_cfg.get("my_instagram_followers", 282))
+        self.my_instagram_posts_count = int(raw_cfg.get("my_instagram_posts_count", 136))
         self.my_instagram_business_account_id = str(raw_cfg.get("my_instagram_business_account_id", "17841400000000000"))
         raw_ig_comps = raw_cfg.get("competitor_instagram_handles", [])
         if isinstance(raw_ig_comps, str):
