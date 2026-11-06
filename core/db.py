@@ -485,33 +485,46 @@ class Database:
         """Records or updates a historical audience snapshot for a given calendar date."""
         now_str = datetime.now(timezone.utc).isoformat()
         total = int(yt_subs) + int(ig_followers)
-        with self._get_connection() as conn:
-            conn.execute("""
-                INSERT INTO audience_snapshots (
-                    recorded_at, date, youtube_subscribers, instagram_followers,
-                    total_audience, youtube_views, instagram_posts, notes, source
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(date) DO UPDATE SET
-                    recorded_at=excluded.recorded_at,
-                    youtube_subscribers=excluded.youtube_subscribers,
-                    instagram_followers=excluded.instagram_followers,
-                    total_audience=excluded.total_audience,
-                    youtube_views=excluded.youtube_views,
-                    instagram_posts=excluded.instagram_posts,
-                    notes=excluded.notes,
-                    source=excluded.source
-            """, (
-                now_str,
-                date_str,
-                int(yt_subs),
-                int(ig_followers),
-                total,
-                int(yt_views),
-                int(ig_posts),
-                notes,
-                source
-            ))
-            conn.commit()
+
+        def _do_insert():
+            with self._get_connection() as conn:
+                conn.execute("""
+                    INSERT INTO audience_snapshots (
+                        recorded_at, date, youtube_subscribers, instagram_followers,
+                        total_audience, youtube_views, instagram_posts, notes, source
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(date) DO UPDATE SET
+                        recorded_at=excluded.recorded_at,
+                        youtube_subscribers=excluded.youtube_subscribers,
+                        instagram_followers=excluded.instagram_followers,
+                        total_audience=excluded.total_audience,
+                        youtube_views=excluded.youtube_views,
+                        instagram_posts=excluded.instagram_posts,
+                        notes=excluded.notes,
+                        source=excluded.source
+                """, (
+                    now_str,
+                    date_str,
+                    int(yt_subs),
+                    int(ig_followers),
+                    total,
+                    int(yt_views),
+                    int(ig_posts),
+                    notes,
+                    source
+                ))
+                conn.commit()
+
+        try:
+            _do_insert()
+        except sqlite3.OperationalError:
+            self._init_db()
+            try:
+                _do_insert()
+            except Exception:
+                pass
+        except Exception:
+            pass
 
         return {
             "recorded_at": now_str,
@@ -527,32 +540,51 @@ class Database:
 
     def get_audience_snapshots(self, limit: int = 52) -> list:
         """Returns recorded audience snapshots ordered chronologically (oldest to newest)."""
-        with self._get_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT * FROM audience_snapshots
-                ORDER BY date ASC
-                LIMIT ?
-            """, (limit,))
-            return [dict(r) for r in cur.fetchall()]
+        try:
+            with self._get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT * FROM audience_snapshots
+                    ORDER BY date ASC
+                    LIMIT ?
+                """, (limit,))
+                return [dict(r) for r in cur.fetchall()]
+        except sqlite3.OperationalError:
+            self._init_db()
+            try:
+                with self._get_connection() as conn:
+                    cur = conn.cursor()
+                    cur.execute("""
+                        SELECT * FROM audience_snapshots
+                        ORDER BY date ASC
+                        LIMIT ?
+                    """, (limit,))
+                    return [dict(r) for r in cur.fetchall()]
+            except Exception:
+                return []
+        except Exception:
+            return []
 
     def seed_audience_snapshots_if_empty(self, history_entries: list) -> int:
         """Seeds historical snapshots from config/history list if table has fewer than 2 records."""
-        existing = self.get_audience_snapshots()
-        if len(existing) >= 2:
-            return 0
+        try:
+            existing = self.get_audience_snapshots()
+            if len(existing) >= 2:
+                return 0
 
-        inserted = 0
-        for entry in history_entries:
-            if not isinstance(entry, dict) or "date" not in entry:
-                continue
-            self.record_audience_snapshot(
-                date_str=entry["date"],
-                yt_subs=int(entry.get("youtube_subs", 0)),
-                ig_followers=int(entry.get("instagram_followers", 0)),
-                notes="Seeded baseline milestone",
-                source="seed"
-            )
-            inserted += 1
-        return inserted
+            inserted = 0
+            for entry in history_entries:
+                if not isinstance(entry, dict) or "date" not in entry:
+                    continue
+                self.record_audience_snapshot(
+                    date_str=entry["date"],
+                    yt_subs=int(entry.get("youtube_subs", 0)),
+                    ig_followers=int(entry.get("instagram_followers", 0)),
+                    notes="Seeded baseline milestone",
+                    source="seed"
+                )
+                inserted += 1
+            return inserted
+        except Exception:
+            return 0
 

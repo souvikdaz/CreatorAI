@@ -34,26 +34,48 @@ class DashboardModule(BaseModule):
                 try:
                     with open(snap_json, "r") as f_snap:
                         json_snaps = json.load(f_snap)
-                    if json_snaps and len(self.db.get_audience_snapshots()) < len(json_snaps):
-                        for s in json_snaps:
-                            self.db.record_audience_snapshot(
-                                date_str=s["date"],
-                                yt_subs=s["youtube_subscribers"],
-                                ig_followers=s["instagram_followers"],
-                                yt_views=s.get("youtube_views", 0),
-                                ig_posts=s.get("instagram_posts", 0),
-                                notes=s.get("notes", "Synced from audience_snapshots.json"),
-                                source=s.get("source", "json_sync")
-                            )
+                    if json_snaps and hasattr(self.db, "record_audience_snapshot"):
+                        existing_count = len(self.db.get_audience_snapshots()) if hasattr(self.db, "get_audience_snapshots") else 0
+                        if existing_count < len(json_snaps):
+                            for s in json_snaps:
+                                self.db.record_audience_snapshot(
+                                    date_str=s["date"],
+                                    yt_subs=s["youtube_subscribers"],
+                                    ig_followers=s["instagram_followers"],
+                                    yt_views=s.get("youtube_views", 0),
+                                    ig_posts=s.get("instagram_posts", 0),
+                                    notes=s.get("notes", "Synced from audience_snapshots.json"),
+                                    source=s.get("source", "json_sync")
+                                )
                 except Exception:
                     pass
 
         # Check and initialize audience snapshots from persistent store / config
-        snapshots = self.db.get_audience_snapshots()
+        snapshots = []
+        if hasattr(self.db, "get_audience_snapshots"):
+            try:
+                snapshots = self.db.get_audience_snapshots()
+            except Exception:
+                snapshots = []
+
         configured_history = self.config.raw.get("audience_history", [])
-        if len(snapshots) < 2 and configured_history:
-            self.db.seed_audience_snapshots_if_empty(configured_history)
-            snapshots = self.db.get_audience_snapshots()
+        if len(snapshots) < 2 and configured_history and hasattr(self.db, "seed_audience_snapshots_if_empty"):
+            try:
+                self.db.seed_audience_snapshots_if_empty(configured_history)
+                snapshots = self.db.get_audience_snapshots()
+            except Exception:
+                pass
+
+        # Direct fallback to data/audience_snapshots.json if snapshots list is still empty (e.g. Streamlit Cloud)
+        if not snapshots and getattr(self.db, "db_path", "") != ":memory:":
+            from pathlib import Path
+            snap_json = Path(self.config.sqlite_db_path).parent / "audience_snapshots.json"
+            if snap_json.exists():
+                try:
+                    with open(snap_json, "r") as f_snap:
+                        snapshots = json.load(f_snap)
+                except Exception:
+                    snapshots = []
 
         # 1. KPI Cards Computation
         # Default baseline

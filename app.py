@@ -135,6 +135,15 @@ def get_services():
 
 config, db, quota, yt_client, ig_client, gear_mgr = get_services()
 
+# Ensure cached Database instance is fresh and schema is synchronized (self-healing for Streamlit Cloud)
+if not hasattr(db, "get_audience_snapshots") or not hasattr(db, "record_audience_snapshot"):
+    db = Database(config.sqlite_db_path)
+else:
+    try:
+        db._init_db()
+    except Exception:
+        pass
+
 # --- SIDEBAR ---
 with st.sidebar:
     st.markdown("### 🎬 Creator Studio AI")
