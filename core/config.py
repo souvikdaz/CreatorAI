@@ -127,7 +127,8 @@ class Config:
         self.competitor_channel_ids = [extract_channel_identifier(c) for c in raw_comps if c]
 
         # Instagram configuration
-        self.my_instagram_handle = str(raw_cfg.get("my_instagram_handle", "@mototechexplorer"))
+        raw_ig_handle = str(raw_cfg.get("my_instagram_handle", "@souvik_says")).strip()
+        self.my_instagram_handle = raw_ig_handle if raw_ig_handle.startswith("@") else f"@{raw_ig_handle}"
         self.my_instagram_business_account_id = str(raw_cfg.get("my_instagram_business_account_id", "17841400000000000"))
         raw_ig_comps = raw_cfg.get("competitor_instagram_handles", [])
         if isinstance(raw_ig_comps, str):
