@@ -4,11 +4,12 @@
 
 bike: Himalayan 450
 action_camera: DJI Osmo Action 3
-phone: Motorola Edge 40 Neo 1080p 60 fps
+phone: Motorola Edge 40 Neo
 microphones:
   - Generic wired microphone
   - Grenaro wireless microphone
 computer: Apple Mac Mini M4
 video_editing_fx: Final Cut Pro
 image_editing: Canva (Free tier)
+capture profile: 1080p 25fps rocksteady
 other: []
