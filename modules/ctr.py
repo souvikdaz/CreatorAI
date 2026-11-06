@@ -42,59 +42,60 @@ class CTRCritiqueModule(BaseModule):
             ctr_status = "ABOVE_NICHE" if ctr_gap >= 0 else "BELOW_NICHE"
 
             # Formulate title and thumbnail fixes tailored to Canva Free and Final Cut Pro
-            if v_id == "my_vid_01":
-                title_fix = "Himalayan 450: The Cold Truth Nobody Tells You Before Ladakh"
+            if v_id == "bW5s1DNjK8I" or "Umling La" in title:
+                title_fix = "Surviving 18,000 FT on Himalayan 450: The Nurbu La Route to Umling La"
                 thumb_fix = (
-                    "In Canva (Free tier): Use a high-contrast split layout. On the left, place a high-contrast close-up of the Himalayan 450's "
-                    "frozen front fork; on the right, bold yellow text (#FFEB3B) reading '-4°C TRUTH' (maximum 2 words). "
-                    "Note: Canva Free does not support Magic Resize, so maintain 1280x720 16:9 canvas directly."
+                    "In Canva (Free tier): High-contrast freeze frame of Himalayan 450 wheel on jagged shale rock at Nurbu La pass. "
+                    "Add bold yellow text: '18,000 FT REALITY' in upper-right corner. Maintain 1280x720 canvas."
                 )
                 fcp_edit_fix = (
-                    "In Final Cut Pro on Mac Mini M4: Snip the first 3 seconds of talking head; open instantly with the roaring exhaust and Baralacha La "
-                    "snowdrift visual from the DJI Osmo Action 3 at 0:01. At timestamp 01:45, cut the 30-second static B-roll down to 4 seconds and insert "
-                    "a jump cut with animated text overlay."
+                    "In Final Cut Pro on Mac Mini M4: Cut the 3-second talking intro; open immediately at 0:00 with the sputtering exhaust gasping "
+                    "for air at 18,000 feet. At 01:45, trim scenic pan down to 4s and speed-ramp the rock climb."
                 )
-            elif v_id == "my_vid_02":
-                title_fix = "DJI Osmo Action 3: The ₹1,500 Motovlog Mic Setup That Actually Works"
+            elif v_id == "mxK3KPN1FMk" or "Rezang La" in title:
+                title_fix = "Riding to the Edge of India: Hanle & Rezang La on Himalayan 450"
                 thumb_fix = (
-                    "In Canva (Free tier): Place a close-up image of the helmet chin mount on the left with a bright red arrow pointing to the "
-                    "mic foam. Overlay text: 'ZERO WIND NOISE' in white font with dark drop-shadow (Canva free text effects). "
-                    "Avoid complex cutouts as Canva Free lacks 1-click background remover."
+                    "In Canva (Free tier): Wide desolate shot of Himalayan 450 parked near Rezang La war memorial with snow-capped ridge background. "
+                    "Bold white text with dark outline: 'THE SILENT BORDER' using free typography."
                 )
                 fcp_edit_fix = (
-                    "In Final Cut Pro on Mac Mini M4: Remove the 5-second intro channel graphic. Cut straight to side-by-side audio playback at 0:00. "
-                    "At timestamp 03:10, overlay a voiceover recording over the mounting diagram to prevent retention drop."
+                    "In Final Cut Pro on Mac Mini M4: Remove the slow 5-second landscape pan. Open with rider voiceover over moving Osmo Action 3 "
+                    "footage approaching the memorial. At 03:10, cut straight-road silence and add engine audio."
                 )
-            elif v_id == "my_vid_03":
-                title_fix = "Himalayan 450 Monsoon Test: 500KM Rain Ride Truth"
+            elif v_id == "uiPuFqgcWCo" or "Auto-Rickshaw" in title:
+                title_fix = "An Auto-Rickshaw at 17,982 FT?! Khardung La on Himalayan 450"
                 thumb_fix = (
-                    "In Canva (Free tier): Choose a high-action frame of the Himalayan 450 splashing through rain water, boosted +15% saturation. "
-                    "Add a bold badge: '500KM RAIN TEST'. Use dark vignette overlay available in Canva Free."
+                    "In Canva (Free tier): Freeze frame showing the yellow auto-rickshaw right next to the Himalayan 450 at Khardung La top. "
+                    "Red arrow pointing to auto-rickshaw with text: 'AT 18,000 FT?!'."
                 )
                 fcp_edit_fix = (
-                    "In Final Cut Pro on Mac Mini M4: Eliminate the 4-second garage dialogue. Begin directly on wet highway spray at 80 km/h. "
-                    "At timestamp 02:15, speed-ramp the prolonged highway stretch to 400% speed with directional audio swoosh."
+                    "In Final Cut Pro on Mac Mini M4: Cut the 4-second Leh hotel room preamble; teaser clip of the auto-rickshaw in freezing snow "
+                    "must hit in the first 2 seconds before title transition. Trim traffic wait at 02:30."
                 )
-            elif v_id == "my_vid_04":
-                title_fix = "5 Himalayan 450 Checks You MUST Do Before 1,000KM Highway Rides"
+            elif v_id == "0BorTN7XpKM" or "Google Maps" in title:
+                title_fix = "Google Maps Said NO: Finding The Secret Dirt Route to Leh"
                 thumb_fix = (
-                    "In Canva (Free tier): Macro photo of hand adjusting Himalayan 450 drive chain. High-visibility red box with white text: 'CHECK THIS FIRST'. "
-                    "Keep layout clean and centered for mobile feed visibility."
+                    "In Canva (Free tier): Split composition with mobile screenshot showing 'No Route Found' next to steep dirt mountain pass. "
+                    "Bold text: 'NO MAPS ROUTE' in high-contrast yellow."
                 )
                 fcp_edit_fix = (
-                    "In Final Cut Pro on Mac Mini M4: Cut the 8-second personal anecdote before Tip #1. Jump straight into the chain slack measurement. "
-                    "At 04:30, insert an on-screen visual highlight circle around the electrical relay."
+                    "In Final Cut Pro on Mac Mini M4: Drop the 8-second phone GPS demonstration; start right on the front tire rolling onto the unmarked "
+                    "dirt path with Grenaro wireless mic audio. Speed-ramp the 03:00 dirt trail section."
+                )
+            elif v_id == "JLEuioDpubM" or "Zanskar" in title:
+                title_fix = "Trapped in Freezing Rain & Slush: Zanskar on Himalayan 450"
+                thumb_fix = (
+                    "In Canva (Free tier): Mud-soaked Himalayan 450 front fender in freezing slush at Baralacha La pass. Boost contrast +15%. "
+                    "Text: 'WORST WEATHER EVER' in bold red badge."
+                )
+                fcp_edit_fix = (
+                    "In Final Cut Pro on Mac Mini M4: Start instantly with freezing sleet hitting the helmet visor at 0:00 rather than inside the tent. "
+                    "At 02:40, cut protracted lens drop blur to second Osmo Action 3 angle."
                 )
             else:
-                title_fix = "Grenaro Wireless vs Wired Mic: The 100 km/h Helmet Test on Himalayan 450"
-                thumb_fix = (
-                    "In Canva (Free tier): Side-by-side comparison thumbnail with a vertical dividing line. Left: Wired Mic. Right: Grenaro Wireless Mic. "
-                    "Center text: 'WHICH IS BETTER?' in bold sans-serif font."
-                )
-                fcp_edit_fix = (
-                    "In Final Cut Pro on Mac Mini M4: Replace the 2-second silent title card with an immediate 2-second high-speed audio blast comparing both mics. "
-                    "At 02:40, add a decibel sound meter telemetry overlay to visualize wind noise reduction."
-                )
+                title_fix = f"Himalayan 450 Tour: {title[:40]} Fix"
+                thumb_fix = "In Canva (Free tier): Place Himalayan 450 in rule-of-thirds left; bold 3-word title on right with yellow highlight."
+                fcp_edit_fix = "In Final Cut Pro on Mac Mini M4: Cut first 3 seconds of static preamble; hook viewer with engine rev and terrain."
 
             critiques.append({
                 "video_id": v_id,

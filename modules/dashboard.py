@@ -126,49 +126,28 @@ class DashboardModule(BaseModule):
             })
 
         # 7. Thumbnail Gallery (Last 5 YouTube + Last 6 Instagram)
-        # Uses platform thumbnail URLs from API (mock URLs without downloading images)
-        yt_gallery = [
-            {
-                "id": "my_vid_01",
-                "title": "Ladakh Solo Ride on Himalayan 450",
+        # Uses real YouTube thumbnails from official CDN: https://i.ytimg.com/vi/{video_id}/hqdefault.jpg
+        yt_gallery = []
+        for v in my_videos[:5]:
+            v_id = v["video_id"]
+            crit_item = next((rc for rc in retention_curves if rc["video_id"] == v_id), None)
+            score = 82
+            top_fix = "High-contrast Himalayan 450 route graphic in Canva Free; hook alignment in Final Cut Pro on Mac Mini M4."
+            if crit_item:
+                ctr_val = crit_item.get("ctr", 7.5)
+                score = min(92, max(65, int(ctr_val * 11)))
+                drops = json.loads(crit_item["drop_off_points_json"]) if isinstance(crit_item.get("drop_off_points_json"), str) else crit_item.get("drop_off_points_json", [])
+                if drops:
+                    top_fix = f"Fix {drops[0].get('timestamp_formatted', '00:03')}: {drops[0].get('cause', '')} cut in Final Cut Pro."
+
+            yt_gallery.append({
+                "id": v_id,
+                "title": v["title"][:42] + ("..." if len(v["title"]) > 42 else ""),
                 "platform": "YouTube",
-                "thumbnail_url": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500&q=80",
-                "critique_score": 78,
-                "top_fix": "Add bold yellow '-4°C TRUTH' text in Canva Free; drop static intro talking head in Final Cut Pro."
-            },
-            {
-                "id": "my_vid_02",
-                "title": "DJI Osmo Action 3 Chin Mount Setup",
-                "platform": "YouTube",
-                "thumbnail_url": "https://images.unsplash.com/photo-1508974239320-0a029497e820?w=500&q=80",
-                "critique_score": 86,
-                "top_fix": "Bright red arrow pointing to mic foam; overlay 'ZERO WIND NOISE' using Canva Free text drop-shadow."
-            },
-            {
-                "id": "my_vid_03",
-                "title": "Delhi to Lansdowne 500KM Rain Ride Test",
-                "platform": "YouTube",
-                "thumbnail_url": "https://images.unsplash.com/photo-1571188654248-7a89213915f7?w=500&q=80",
-                "critique_score": 68,
-                "top_fix": "Boost rain spray contrast +15%; cut 4-second garage dialogue in Final Cut Pro on Mac Mini M4."
-            },
-            {
-                "id": "my_vid_04",
-                "title": "5 Motorcycle Maintenance Checks Before 1,000KM",
-                "platform": "YouTube",
-                "thumbnail_url": "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=500&q=80",
-                "critique_score": 75,
-                "top_fix": "Macro close-up of Himalayan 450 drive chain; add 'CHECK THIS FIRST' red badge in Canva Free."
-            },
-            {
-                "id": "my_vid_05",
-                "title": "Grenaro Wireless vs Wired Mic 100km/h Test",
-                "platform": "YouTube",
-                "thumbnail_url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=500&q=80",
-                "critique_score": 82,
-                "top_fix": "Split-frame comparison thumbnail; replace silent title card with immediate 2-second audio burst."
-            }
-        ]
+                "thumbnail_url": f"https://i.ytimg.com/vi/{v_id}/hqdefault.jpg",
+                "critique_score": score,
+                "top_fix": top_fix
+            })
 
         ig_gallery = []
         for p in my_ig_posts[:6]:
