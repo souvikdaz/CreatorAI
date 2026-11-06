@@ -26,7 +26,7 @@ class WeeklyReportGenerator:
         now_str = datetime.now(timezone.utc).strftime("%d %B %Y")
         md = []
         md.append(f"# 📈 Complete Weekly Dual-Platform Strategy Report")
-        md.append(f"**Primary YouTube Channel:** `{self.config.my_channel_id}` | **Instagram:** `{self.config.my_instagram_handle}`")
+        md.append(f"**Primary YouTube Channel:** `{self.config.my_channel_handle}` (`{self.config.my_channel_id}`) | **Instagram:** `{self.config.my_instagram_handle}`")
         md.append(f"**Audit Date:** `{now_str}` | **Timezone:** `{self.config.timezone}` | **Platform Scope:** `{platform.upper()}`\n")
         md.append("---")
 

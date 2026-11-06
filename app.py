@@ -121,7 +121,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("#### 📺 Connected Channels")
-    st.markdown(f"- **YouTube:** `{config.my_channel_id}`")
+    st.markdown(f"- **YouTube:** **{config.my_channel_handle}** (`{config.my_channel_id}`)")
     st.markdown(f"- **Instagram:** `{config.my_instagram_handle}`")
     st.caption(f"Timezone: **{config.timezone}** • Audience: **{config.audience_country}**")
 

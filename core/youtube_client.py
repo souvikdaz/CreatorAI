@@ -26,10 +26,11 @@ class YouTubeClient:
     def _seed_mock_data(self, force: bool = False):
         existing_my = self.db.get_my_channel()
         if existing_my and not force:
-            return
+            if existing_my.get("channel_id") == self.config.my_channel_id and existing_my.get("custom_url") == self.config.my_channel_handle:
+                return
 
         print("[YouTubeClient] Initializing sample/mock dataset for channel, Instagram & competitors...")
-        seed = get_mock_database_seed(self.config.my_channel_id)
+        seed = get_mock_database_seed(self.config.my_channel_id, self.config.my_channel_handle, self.config.my_channel_title)
         for ch in seed.get("channels", []):
             self.db.upsert_channel(ch)
         for vid in seed.get("videos", []):

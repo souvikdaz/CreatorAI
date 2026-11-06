@@ -80,7 +80,7 @@ class NicheBenchmarkModule(BaseModule):
             {
                 "recommendation": "Use 5 Focused Niche Tags Instead of 30 Broad Tags",
                 "why_it_works": "Instagram's semantic AI search indexes topical relevance through keywords in audio and caption text; tag stuffing triggers spam filters.",
-                "how_to_adapt": "Standardize on 5 tags: 1 bike-specific (`#himalayan450`), 2 niche-specific (`#motorcycletouring`, `#advrider`), 1 location (`#spiti` or `#ladakh`), and 1 branded (`#mototechexplorer`)."
+                "how_to_adapt": f"Standardize on 5 tags: 1 bike-specific (`#himalayan450`), 2 niche-specific (`#motorcycletouring`, `#advrider`), 1 location (`#spiti` or `#ladakh`), and 1 branded (`{self.config.my_channel_handle.lower()}`)."
             },
             {
                 "recommendation": "Leverage Canva Free Carousels for Tool & Route Guides",

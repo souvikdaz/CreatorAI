@@ -23,7 +23,7 @@ class DailyDigestGenerator:
 
         md = []
         md.append(f"# 📅 Daily Dual-Platform Action Digest — {now_str}")
-        md.append(f"**YouTube:** `{self.config.my_channel_id}` | **Instagram:** `{self.config.my_instagram_handle}`")
+        md.append(f"**YouTube:** `{self.config.my_channel_handle}` (`{self.config.my_channel_id}`) | **Instagram:** `{self.config.my_instagram_handle}`")
         md.append(f"**Timezone:** `{self.config.timezone}` | **Platform Scope:** `{platform.upper()}`\n")
         md.append("---")
 

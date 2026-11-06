@@ -18,14 +18,14 @@ def get_sample_transcript() -> list:
         {"start_sec": 600, "end_sec": 660, "text": "Summary of today's 280-kilometer stint: 14 hours saddle time on the Himalayan 450, zero mechanical breakdowns, and memories that will last a lifetime. Drop your questions below on permits and gear list, and make sure you're subscribed for Part 2 tackling Shinku La pass."}
     ]
 
-def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ") -> dict:
+def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ", my_channel_handle: str = "@SouvikSays", my_channel_title: str = "Souvik Says") -> dict:
     now = datetime.now(timezone.utc)
 
     channels = [
         {
             "channel_id": my_channel_id,
-            "title": "MotoTech Explorer",
-            "custom_url": "@MotoTechExplorer",
+            "title": my_channel_title,
+            "custom_url": my_channel_handle,
             "subscriber_count": 420,
             "view_count": 82400,
             "video_count": 18,
@@ -165,7 +165,7 @@ def get_mock_database_seed(my_channel_id: str = "UCu2EoFcaIV7rqAXvG9rcUiQ") -> d
             "channel_id": my_channel_id,
             "title": "Grenaro Wireless Microphone vs Wired Mic: High-Speed Himalayan 450 Audio Test",
             "description": "Real riding audio test on the Himalayan 450 comparing Grenaro wireless mic vs generic wired mic inside a full-face helmet.\n\nEdited in Final Cut Pro on Mac Mini M4.",
-            "tags": ["grenaro wireless mic", "himalayan 450", "motovlog audio", "dji osmo action 3", "mototech explorer"],
+            "tags": ["grenaro wireless mic", "himalayan 450", "motovlog audio", "dji osmo action 3", "souvik says"],
             "published_at": (now - timedelta(days=78, hours=4)).isoformat(),
             "duration_sec": 490,
             "views": 6200,

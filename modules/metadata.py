@@ -124,7 +124,7 @@ class MetadataModule(BaseModule):
         # Generate Description with first 150 chars front-loaded for SEO & CTA
         # First 150 chars appear in search snippet and mobile preview
         first_150_chars = (
-            "Get my complete motorcycle touring packing list and luggage setup for 2026. Download the free PDF checklist here: https://mototechexplorer.com/pack"
+            "Get my complete motorcycle touring packing list and luggage setup for 2026. Download the free PDF checklist here: https://souviksays.com/pack"
         )
         description_body = f"""{first_150_chars}
 

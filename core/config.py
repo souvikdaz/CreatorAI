@@ -110,6 +110,8 @@ class Config:
         self.raw = raw_cfg
         self.my_channel_id_raw = raw_cfg.get("my_channel_id", "")
         self.my_channel_id = extract_channel_identifier(self.my_channel_id_raw)
+        self.my_channel_handle = str(raw_cfg.get("my_channel_handle", "@SouvikSays")).strip()
+        self.my_channel_title = str(raw_cfg.get("my_channel_title", "Souvik Says")).strip()
 
         raw_niche = raw_cfg.get("niche_keywords", [])
         if isinstance(raw_niche, str):
@@ -166,6 +168,8 @@ class Config:
     def summary(self) -> dict:
         return {
             "my_channel_id": self.my_channel_id,
+            "my_channel_handle": self.my_channel_handle,
+            "my_channel_title": self.my_channel_title,
             "my_instagram_handle": self.my_instagram_handle,
             "niche_keywords_count": len(self.niche_keywords),
             "youtube_competitors_count": len(self.competitor_channel_ids),

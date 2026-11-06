@@ -137,7 +137,7 @@ def main():
 
     print(f"\n=======================================================")
     print(f"🎬 Dual-Platform Social Media Manager Agent")
-    print(f"YouTube: {config.my_channel_id} | Instagram: {config.my_instagram_handle}")
+    print(f"YouTube: {config.my_channel_handle} ({config.my_channel_id}) | Instagram: {config.my_instagram_handle}")
     print(f"Timezone: {config.timezone} | Platform Scope: {args.platform.upper()}")
     print(f"Gear Source: {config.gear_config_path}")
     print(f"Mode: {'MOCK DATASET' if config.use_mock_data or not config.youtube_api_key else 'LIVE APIs'}")
