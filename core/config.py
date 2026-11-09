@@ -24,11 +24,33 @@ def _load_env_file(env_path: Path):
         print(f"[Config] Note: Could not parse .env file: {e}")
 
 def _load_yaml_file(yaml_path: Path) -> dict:
-    """Loads YAML file using PyYAML if available, or a fallback parser for basic structures."""
+    """Loads YAML file using PyYAML if available, with auto-repair and fallback parsers."""
+    if not yaml_path or not yaml_path.exists():
+        return {}
     try:
         import yaml
         with open(yaml_path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+            content = f.read()
+        try:
+            return yaml.safe_load(content) or {}
+        except Exception as scan_err:
+            print(f"[Config] Warning: PyYAML parsing issue in {yaml_path}: {scan_err}. Attempting auto-sanitization...")
+            # Repair common accidental YAML indentation mistakes
+            sanitized_lines = []
+            for line in content.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("phone_settings:") or stripped.startswith("phone_specs:"):
+                    sanitized_lines.append(stripped)
+                elif line.startswith("    ") and not line.startswith("      ") and ":" in line:
+                    sanitized_lines.append(stripped)
+                elif line.startswith("      ") and ":" in line:
+                    sanitized_lines.append("  " + stripped)
+                else:
+                    sanitized_lines.append(line)
+            repaired = yaml.safe_load("\n".join(sanitized_lines))
+            if repaired and isinstance(repaired, dict):
+                return repaired
+            return {}
     except ImportError:
         pass
 

@@ -110,5 +110,33 @@ class TestGearFilter(unittest.TestCase):
         self.assertEqual(gm.get_phone_spec_notice(), "")
         self.assertEqual(gm.phone_settings["resolution"], "4K")
 
+    def test_indented_yaml_resilience(self):
+        """Verifies that GearManager auto-heals accidental YAML indentation mistakes under scalar keys."""
+        import tempfile
+        bad_yaml_content = (
+            "bike: Himalayan 450\n"
+            "action_camera: DJI Osmo Action 3\n"
+            "phone: Motorola Edge 40 Neo\n"
+            "    phone_settings:\n"
+            "      resolution: \"1080p\"\n"
+            "      frame_rate: \"60fps\"\n"
+            "      stabilisation: \"EIS Enabled\"\n"
+            "microphones:\n"
+            "  - Generic wired microphone\n"
+        )
+        with tempfile.NamedTemporaryFile("w+", suffix=".yaml", delete=False) as tf:
+            tf.write(bad_yaml_content)
+            tf.flush()
+            tmp_path = tf.name
+
+        try:
+            gm = GearManager(tmp_path)
+            self.assertEqual(gm.phone, "Motorola Edge 40 Neo")
+            self.assertEqual(gm.phone_settings.get("resolution"), "1080p")
+            self.assertEqual(gm.phone_settings.get("frame_rate"), "60fps")
+            self.assertTrue(gm.is_phone_spec_confirmed())
+        finally:
+            Path(tmp_path).unlink(missing_ok=True)
+
 if __name__ == "__main__":
     unittest.main()

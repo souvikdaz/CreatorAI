@@ -46,13 +46,24 @@ class GearManager:
         self.gear = self._load_gear()
 
     def _load_gear(self) -> dict:
-        if self.gear_file_path.exists():
-            return _load_yaml_file(self.gear_file_path)
+        try:
+            if self.gear_file_path.exists():
+                data = _load_yaml_file(self.gear_file_path)
+                if data and isinstance(data, dict):
+                    return data
+        except Exception as e:
+            print(f"[GearManager] Warning loading {self.gear_file_path}: {e}")
         # Fallback default adhering to specification
         return {
             "bike": "Himalayan 450",
             "action_camera": "DJI Osmo Action 3",
             "phone": "Motorola Edge 40 Neo",
+            "phone_settings": {
+                "resolution": "1080p",
+                "frame_rate": "60fps",
+                "stabilisation": "EIS Enabled",
+                "aspect_ratio": "16:9 Horizontal (Long Form Videos)"
+            },
             "microphones": [
                 "Generic wired microphone",
                 "Grenaro wireless microphone"
