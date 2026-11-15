@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "recorded_at": "2026-11-06T19:18:47.731092+00:00",
+    "recorded_at": "2026-11-15T19:55:22.638977+00:00",
     "date": "2026-08-14",
     "youtube_subscribers": 740,
     "instagram_followers": 230,
@@ -13,7 +13,7 @@
   },
   {
     "id": 2,
-    "recorded_at": "2026-11-06T19:18:47.731912+00:00",
+    "recorded_at": "2026-11-15T19:55:22.640019+00:00",
     "date": "2026-09-04",
     "youtube_subscribers": 770,
     "instagram_followers": 239,
@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "recorded_at": "2026-11-06T19:18:47.732792+00:00",
+    "recorded_at": "2026-11-15T19:55:22.641131+00:00",
     "date": "2026-09-25",
     "youtube_subscribers": 800,
     "instagram_followers": 248,
@@ -37,7 +37,7 @@
   },
   {
     "id": 4,
-    "recorded_at": "2026-11-06T19:18:47.733646+00:00",
+    "recorded_at": "2026-11-15T19:55:22.642042+00:00",
     "date": "2026-10-09",
     "youtube_subscribers": 833,
     "instagram_followers": 259,
@@ -49,7 +49,7 @@
   },
   {
     "id": 5,
-    "recorded_at": "2026-11-06T19:18:47.734557+00:00",
+    "recorded_at": "2026-11-15T19:55:22.643180+00:00",
     "date": "2026-10-16",
     "youtube_subscribers": 854,
     "instagram_followers": 261,
@@ -61,7 +61,7 @@
   },
   {
     "id": 6,
-    "recorded_at": "2026-11-06T19:18:47.735417+00:00",
+    "recorded_at": "2026-11-15T19:55:22.644163+00:00",
     "date": "2026-10-23",
     "youtube_subscribers": 878,
     "instagram_followers": 272,
@@ -73,8 +73,20 @@
   },
   {
     "id": 7,
-    "recorded_at": "2026-11-06T19:18:49.234848+00:00",
+    "recorded_at": "2026-11-15T19:55:22.645097+00:00",
     "date": "2026-11-06",
+    "youtube_subscribers": 887,
+    "instagram_followers": 282,
+    "total_audience": 1169,
+    "youtube_views": 0,
+    "instagram_posts": 0,
+    "notes": "Seeded baseline milestone",
+    "source": "seed"
+  },
+  {
+    "id": 8,
+    "recorded_at": "2026-11-15T19:55:23.885382+00:00",
+    "date": "2026-11-15",
     "youtube_subscribers": 887,
     "instagram_followers": 282,
     "total_audience": 1169,
